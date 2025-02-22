@@ -1,0 +1,33 @@
+{
+    "characters": [
+      {
+        "id": "example_char_1",
+        "name": "ゼラス",
+        "type": "AP",
+        "class": "Mage",
+        "customSkills": [
+          {
+            "id": "skill_1",
+            "originalType": "AOE",
+            "customName": "ゼラスウルト",
+            "customDescription": "範囲攻撃スキル",
+            "usageCount": 0
+          }
+        ],
+        "background": "帝国の魔法研究所から抜け出した研究者",
+        "appearance": "青いローブを纏った痩せ型の人物"
+      }
+    ],
+    "items": [
+      {
+        "id": "item_1",
+        "originalType": "BOOTS",
+        "customName": "スイフトネスブーツ",
+        "customDescription": "軽やかな動きを可能にする魔法の靴",
+        "cost": 10,
+        "effects": {
+          "dodge": 3
+        }
+      }
+    ]
+  }

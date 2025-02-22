@@ -1,0 +1,2 @@
+// store/gameSlice.ts
+export {};
