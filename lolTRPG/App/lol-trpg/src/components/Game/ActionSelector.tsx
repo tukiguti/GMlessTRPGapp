@@ -1,11 +1,7 @@
 // src/components/Game/ActionSelector.tsx
 
 import React from 'react';
-import { GamePhase } from './GameContainer';
-
-export type LaneAction = 'FARM' | 'ATTACK' | 'RECALL';
-export type TeamFightAction = 'SIDE_PUSH' | 'ATTACK' | 'RECALL';
-export type GameAction = LaneAction | TeamFightAction;
+import { GamePhase, GameAction } from '../../types/gameTypes';
 
 interface ActionSelectorProps {
     phase: GamePhase;

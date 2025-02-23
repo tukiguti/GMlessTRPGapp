@@ -212,7 +212,11 @@ const App: React.FC = () => {
       {/* ゲーム画面 */}
       {gameState === 'game' && (
         <>
-          <GameContainer initialTeamSize={teamSize} />
+          <GameContainer 
+            initialTeamSize={teamSize} 
+            blueTeam={selectedTeam.blue.filter((char): char is CustomCharacter => char !== null)}
+            redTeam={selectedTeam.red.filter((char): char is CustomCharacter => char !== null)}
+          />
           <StatusDisplay
             team="ally"
             characters={selectedTeam.blue.filter((char): char is CustomCharacter => char !== null)}
