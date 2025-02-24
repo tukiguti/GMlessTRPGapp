@@ -1,2 +1,0 @@
-// models/item.ts
-export {};
