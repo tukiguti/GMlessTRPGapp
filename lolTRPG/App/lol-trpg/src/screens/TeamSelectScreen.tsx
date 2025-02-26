@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useGameStore } from '../store/gameStore';
+import { useCharacterStore } from '../store/characterStore';
+import { useTeamStore } from '../store/teamStore';
+import { useGamePhaseStore } from '../store/gamePhaseStore';
 import { CustomCharacter } from '../types/character';
 import { Button, Select, MenuItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const TeamSelectScreen: React.FC = () => {
-  const { characters, teamSize, setTeamSize, setTeams } = useGameStore();
+  const { characters } = useCharacterStore(); // ✅ 修正: キャラクター管理は `useCharacterStore()`
+  const { teamSize, setTeamSize, setTeams } = useTeamStore(); // ✅ 修正: チーム管理は `useTeamStore()`
+  const { setGamePhase } = useGamePhaseStore(); // ✅ 修正: ゲームフェーズ管理は `useGamePhaseStore()`
   const [blueTeam, setBlueTeam] = useState<(CustomCharacter | null)[]>([]);
   const [redTeam, setRedTeam] = useState<(CustomCharacter | null)[]>([]);
+  const navigate = useNavigate();
 
   // ✅ チームサイズが変更されたら配列のサイズを更新
   useEffect(() => {
@@ -33,10 +39,18 @@ const TeamSelectScreen: React.FC = () => {
   };
 
   const handleConfirm = () => {
+    if (blueTeam.includes(null) || redTeam.includes(null)) {
+      alert('全員のキャラクターを選択してください。');
+      return;
+    }
+
     setTeams(
       blueTeam.filter((char): char is CustomCharacter => char !== null),
       redTeam.filter((char): char is CustomCharacter => char !== null)
     );
+
+    setGamePhase('lane'); // ✅ 修正: `useGamePhaseStore()` を使用して試合フェーズを開始
+    navigate('/game');    // ✅ 試合画面へ遷移
   };
 
   return (

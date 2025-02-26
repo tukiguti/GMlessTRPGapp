@@ -1,34 +1,48 @@
 import React, { useState } from 'react';
-import { useGameStore } from '../store/gameStore';
+import { useTeamStore } from '../store/teamStore'; // ✅ チーム管理
+import { useBattleStore } from '../store/battleStore'; // ✅ 戦闘管理
 import TeamActionSelection from '../components/game/TeamActionSelection';
-import BattleResolution from '../components/game/BattleResolution';
 import LanePhaseResult from '../components/game/LanePhaseResult';
 
-const LanePhaseScreen: React.FC<{ onNextPhase: () => void }> = ({ onNextPhase }) => {
-  const { setGamePhase } = useGameStore();
-  const [phase, setPhase] = useState<'action' | 'battle' | 'result'>('action');
+interface LanePhaseScreenProps {
+  onNextPhase: () => void;
+}
+
+const LanePhaseScreen: React.FC<LanePhaseScreenProps> = ({ onNextPhase }) => {
+  const { blueTeam, redTeam } = useTeamStore(); // ✅ `blueTeam` と `redTeam` を `useTeamStore()` から取得
+  const { setActions } = useBattleStore(); // ✅ `setActions()` を `useBattleStore()` から取得
+  const [actionsConfirmed, setActionsConfirmed] = useState(false);
+
+  // ✅ 行動と攻撃対象を管理するステート
+  const [selectedActions, setSelectedActions] = useState<Record<string, { action: string; target?: string }>>({});
+
+  const handleActionConfirm = () => {
+    if (
+      blueTeam.some((char) => !selectedActions[char.id]?.action) ||
+      redTeam.some((char) => !selectedActions[char.id]?.action)
+    ) {
+      alert('全員の行動を選択してください。');
+      return;
+    }
+
+    Object.entries(selectedActions).forEach(([playerId, { action, target }]) => {
+      setActions(playerId, { action, target }); // ✅ 修正: `useBattleStore()` の `setActions()` を使用
+    });
+
+    setActionsConfirmed(true);
+  };
 
   return (
     <div>
       <h1>レーン戦フェーズ</h1>
-
-      {phase === 'action' && (
+      {!actionsConfirmed ? (
         <>
-          <TeamActionSelection team="blue" />
-          <TeamActionSelection team="red" />
-          <button onClick={() => setPhase('battle')}>行動確定</button>
+          <TeamActionSelection team="blue" setSelectedActions={setSelectedActions} />
+          <TeamActionSelection team="red" setSelectedActions={setSelectedActions} />
+          <button onClick={handleActionConfirm}>行動確定</button>
         </>
-      )}
-
-      {phase === 'battle' && <BattleResolution onComplete={() => setPhase('result')} />}
-
-      {phase === 'result' && (
-        <>
-          <LanePhaseResult onNextPhase={() => {
-            setGamePhase('siege'); // 集団戦フェーズへ遷移
-            onNextPhase();
-          }} />
-        </>
+      ) : (
+        <LanePhaseResult onNextPhase={onNextPhase} />
       )}
     </div>
   );

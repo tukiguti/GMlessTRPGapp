@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useGamePhaseStore } from '../store/gamePhaseStore'; // ✅ フェーズ管理
 import LanePhaseScreen from './LanePhaseScreen';
 import SiegePhaseScreen from './SiegePhaseScreen';
 
 const GameScreen: React.FC = () => {
-  const [phase, setPhase] = useState<'lane' | 'siege'>('lane');
+  const { gamePhase } = useGamePhaseStore(); // ✅ 修正: `useGameStore()` → `useGamePhaseStore()`
 
   return (
     <div>
-      {phase === 'lane' ? (
-        <LanePhaseScreen onNextPhase={() => setPhase('siege')} />
-      ) : (
-        <SiegePhaseScreen />
-      )}
+      {gamePhase === 'lane' && <LanePhaseScreen onNextPhase={() => {}} />}
+      {gamePhase === 'siege' && <SiegePhaseScreen onGameEnd={() => {}} />}
     </div>
   );
 };

@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
-import { useGameStore } from '../store/gameStore';
-import { Select, MenuItem, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useCharacterStore } from '../store/characterStore'; // ✅ キャラクター管理を `useCharacterStore()` で行う
+import { useTeamStore } from '../store/teamStore'; // ✅ チーム管理を `useTeamStore()` で行う
+import { useGamePhaseStore } from '../store/gamePhaseStore'; // ✅ ゲームフェーズ管理を `useGamePhaseStore()` で行う
+import { CustomCharacter } from '../types/character';
+import { Button, Select, MenuItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const TeamSelect: React.FC = () => {
-  const { characters, teamSize, setTeamSize, setTeams } = useGameStore();
+  const { characters } = useCharacterStore(); // ✅ `characters` を `useCharacterStore()` から取得
+  const { teamSize, setTeamSize, setTeams } = useTeamStore(); // ✅ `teamSize` と `setTeams` を `useTeamStore()` から取得
+  const { setGamePhase } = useGamePhaseStore(); // ✅ `setGamePhase` を `useGamePhaseStore()` から取得
   const [blueTeam, setBlueTeam] = useState<(string | null)[]>(Array(teamSize).fill(null));
   const [redTeam, setRedTeam] = useState<(string | null)[]>(Array(teamSize).fill(null));
+  const navigate = useNavigate();
 
-  // チームサイズ変更時の処理
+  // ✅ チームサイズが変更されたら配列のサイズを更新
+  useEffect(() => {
+    setBlueTeam(Array(teamSize).fill(null));
+    setRedTeam(Array(teamSize).fill(null));
+  }, [teamSize]);
+
+  // ✅ チームサイズ変更時の処理
   const handleTeamSizeChange = (size: number) => {
     setTeamSize(size);
     setBlueTeam(Array(size).fill(null));
     setRedTeam(Array(size).fill(null));
   };
 
+  // ✅ プレイヤーを選択する処理
   const handleSelectCharacter = (team: 'blue' | 'red', index: number, charId: string) => {
     if (team === 'blue') {
       setBlueTeam((prev) => {
@@ -30,16 +44,23 @@ const TeamSelect: React.FC = () => {
     }
   };
 
+  // ✅ チーム確定時の処理
   const handleConfirm = () => {
-    const selectedBlueTeam = blueTeam.map((charId) => characters.find((char) => char.id === charId)).filter(Boolean);
-    const selectedRedTeam = redTeam.map((charId) => characters.find((char) => char.id === charId)).filter(Boolean);
+    const selectedBlueTeam = blueTeam
+      .map((charId) => characters.find((char) => char.id === charId))
+      .filter(Boolean) as CustomCharacter[];
+    const selectedRedTeam = redTeam
+      .map((charId) => characters.find((char) => char.id === charId))
+      .filter(Boolean) as CustomCharacter[];
 
     if (selectedBlueTeam.length < teamSize || selectedRedTeam.length < teamSize) {
       alert("チームのキャラクターが足りません。");
       return;
     }
 
-    setTeams(selectedBlueTeam as any, selectedRedTeam as any);
+    setTeams(selectedBlueTeam, selectedRedTeam);
+    setGamePhase('lane'); // ✅ 試合フェーズに進む
+    navigate('/game');    // ✅ 試合画面へ遷移
   };
 
   return (

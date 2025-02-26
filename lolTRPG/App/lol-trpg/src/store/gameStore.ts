@@ -1,87 +1,47 @@
 import { create } from 'zustand';
+import { useCharacterStore } from './characterStore';
+import { useTeamStore } from './teamStore';
+import { useGamePhaseStore } from './gamePhaseStore';
+import { useBattleStore } from './battleStore';
 import { CustomCharacter, SkillType } from '../types/character';
 
 interface GameState {
-  characters: CustomCharacter[];
-  teamSize: number;
-  blueTeam: CustomCharacter[];
-  redTeam: CustomCharacter[];
-  actions: { [playerId: string]: string };
-  gamePhase: 'setup' | 'lane' | 'siege';
+  getCharacters: () => CustomCharacter[];
+  getTeamSize: () => number;
+  getBlueTeam: () => CustomCharacter[];
+  getRedTeam: () => CustomCharacter[];
+  getActions: () => Record<string, { action: string; target?: string }>;
+  getHp: () => Record<string, number>;
+  getGamePhase: () => 'setup' | 'teamSelect' | 'lane' | 'siege';
 
   addCharacter: (char: CustomCharacter) => void;
   setTeamSize: (size: number) => void;
   setTeams: (blue: CustomCharacter[], red: CustomCharacter[]) => void;
   loadCharactersFromJson: (jsonData: { characters: CustomCharacter[] }) => void;
-  
-  setActions: (playerId: string, action: string) => void;
+
+  setActions: (playerId: string, actionData: { action: string; target?: string }) => void;
   updateHp: (playerId: string, newHp: number) => void;
   applySkill: (playerId: string, skill: SkillType) => void;
-  setGamePhase: (phase: 'setup' | 'lane' | 'siege') => void;
+  setGamePhase: (phase: 'setup' | 'teamSelect' | 'lane' | 'siege') => void;
 }
 
-export const useGameStore = create<GameState>((set) => ({
-  characters: [],
-  teamSize: 1,
-  blueTeam: [],
-  redTeam: [],
-  actions: {},
-  gamePhase: 'setup',
+export const useGameStore = create<GameState>(() => ({
+  getCharacters: () => useCharacterStore.getState().characters,
+  getTeamSize: () => useTeamStore.getState().teamSize,
+  getBlueTeam: () => useTeamStore.getState().blueTeam,
+  getRedTeam: () => useTeamStore.getState().redTeam,
+  getActions: () => useBattleStore.getState().actions,
+  getHp: () => useBattleStore.getState().hp,
+  getGamePhase: () => useGamePhaseStore.getState().gamePhase,
 
-  // ✅ キャラクターを追加
-  addCharacter: (char) => set((state) => ({
-    characters: [...state.characters, char],
-  })),
+  addCharacter: (char) => useCharacterStore.getState().addCharacter(char),
+  setTeamSize: (size) => useTeamStore.getState().setTeamSize(size),
+  setTeams: (blue, red) => useTeamStore.getState().setTeams(blue, red),
+  loadCharactersFromJson: (jsonData) => useCharacterStore.getState().loadCharactersFromJson(jsonData),
 
-  // ✅ チームサイズ変更
-  setTeamSize: (size) => set({ teamSize: size }),
+  setActions: (playerId, actionData) => useBattleStore.getState().setActions(playerId, actionData),
+  updateHp: (playerId, newHp) => useBattleStore.getState().updateHp(playerId, newHp),
+  applySkill: (playerId, skill) => useBattleStore.getState().applySkill(playerId, skill),
 
-  // ✅ チーム編成
-  setTeams: (blue, red) => set({ blueTeam: blue, redTeam: red }),
-
-  // ✅ JSONからキャラクターをロード
-  loadCharactersFromJson: (jsonData) => set((state) => ({
-    characters: [...state.characters, ...jsonData.characters],
-  })),
-
-  // ✅ 各プレイヤーの行動を設定
-  setActions: (playerId, action) => set((state) => ({
-    actions: { ...state.actions, [playerId]: action },
-  })),
-
-  // ✅ HPを更新
-  updateHp: (playerId, newHp) => set((state) => ({
-    blueTeam: state.blueTeam.map(p =>
-      p.id === playerId ? { ...p, hp: Math.max(0, newHp) } : p
-    ),
-    redTeam: state.redTeam.map(p =>
-      p.id === playerId ? { ...p, hp: Math.max(0, newHp) } : p
-    ),
-  })),
-
-  // ✅ スキル適用（スキルの種類ごとに効果を適用）
-  applySkill: (playerId, skill) => set((state) => {
-    const modifyCharacter = (char: CustomCharacter) => {
-      if (char.id !== playerId) return char;
-
-      switch (skill) {
-        case '絶対成功':
-          return { ...char, attack: '6D6' }; // 攻撃力を最大化
-        case '範囲攻撃':
-          return { ...char, attack: '2D6+3' }; // 攻撃力アップ
-        case '妨害':
-          return { ...char, dodge: '1D6' }; // 回避率をダウン
-        default:
-          return char;
-      }
-    };
-
-    return {
-      blueTeam: state.blueTeam.map(modifyCharacter),
-      redTeam: state.redTeam.map(modifyCharacter),
-    };
-  }),
-
-  // ✅ ゲームフェーズを設定（`setup` → `lane` → `siege`）
-  setGamePhase: (phase) => set({ gamePhase: phase }),
+  setGamePhase: (phase) => useGamePhaseStore.getState().setGamePhase(phase),
 }));
