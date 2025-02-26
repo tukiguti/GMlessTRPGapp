@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useCharacterStore } from '../store/characterStore'; // ✅ キャラクター管理を `useCharacterStore()` で行う
-import { useTeamStore } from '../store/teamStore'; // ✅ チーム管理を `useTeamStore()` で行う
-import { useGamePhaseStore } from '../store/gamePhaseStore'; // ✅ ゲームフェーズ管理を `useGamePhaseStore()` で行う
+import { useCharacterStore } from './store/characterStore'; // ✅ キャラクター管理を `useCharacterStore()` で行う
+import { useTeamStore } from './store/teamStore'; // ✅ チーム管理を `useTeamStore()` で行う
+import { useGamePhaseStore } from './store/gamePhaseStore'; // ✅ ゲームフェーズ管理を `useGamePhaseStore()` で行う
 import { CustomCharacter } from '../types/character';
 import { Button, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';

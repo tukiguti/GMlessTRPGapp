@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useTeamStore } from '../store/teamStore'; // ✅ チーム管理
-import { useBattleStore } from '../store/battleStore'; // ✅ 戦闘管理
+import { useTeamStore } from '../components/store/teamStore'; // ✅ チーム管理
+import { useBattleStore } from '../components/store/battleStore'; // ✅ 戦闘管理
 
 interface SiegePhaseScreenProps {
   onGameEnd: () => void;

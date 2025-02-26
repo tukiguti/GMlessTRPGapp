@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCharacterStore } from '../store/characterStore';
+import { useCharacterStore } from './store/characterStore';
 import {
   CustomCharacter,
   CharacterType,

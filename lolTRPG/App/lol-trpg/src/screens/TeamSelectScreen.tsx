@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useCharacterStore } from '../store/characterStore';
-import { useTeamStore } from '../store/teamStore';
-import { useGamePhaseStore } from '../store/gamePhaseStore';
+import { useCharacterStore } from '../components/store/characterStore';
+import { useTeamStore } from '../components/store/teamStore';
+import { useGamePhaseStore } from '../components/store/gamePhaseStore';
 import { CustomCharacter } from '../types/character';
 import { Button, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const TeamSelectScreen: React.FC = () => {
-  const { characters } = useCharacterStore(); // ✅ 修正: キャラクター管理は `useCharacterStore()`
-  const { teamSize, setTeamSize, setTeams } = useTeamStore(); // ✅ 修正: チーム管理は `useTeamStore()`
-  const { setGamePhase } = useGamePhaseStore(); // ✅ 修正: ゲームフェーズ管理は `useGamePhaseStore()`
+  const { characters = [] } = useCharacterStore(); // ✅ デフォルト値を設定
+  const { teamSize, setTeamSize, setTeams } = useTeamStore(); // ✅ `setTeams` を使用
+  const { setGamePhase } = useGamePhaseStore(); // ✅ `setGamePhase` を取得
   const [blueTeam, setBlueTeam] = useState<(CustomCharacter | null)[]>([]);
   const [redTeam, setRedTeam] = useState<(CustomCharacter | null)[]>([]);
   const navigate = useNavigate();
@@ -49,8 +49,8 @@ const TeamSelectScreen: React.FC = () => {
       redTeam.filter((char): char is CustomCharacter => char !== null)
     );
 
-    setGamePhase('lane'); // ✅ 修正: `useGamePhaseStore()` を使用して試合フェーズを開始
-    navigate('/game');    // ✅ 試合画面へ遷移
+    setGamePhase('lane'); // ✅ 試合フェーズへ遷移
+    navigate('/game');    
   };
 
   return (
@@ -59,7 +59,11 @@ const TeamSelectScreen: React.FC = () => {
 
       {/* ✅ チームサイズ変更 */}
       <h4>チームサイズ</h4>
-      <Select value={teamSize} onChange={(e) => setTeamSize(Number(e.target.value))} fullWidth>
+      <Select
+        value={teamSize}
+        onChange={(e) => setTeamSize(Number(e.target.value))}
+        fullWidth
+      >
         {[1, 2, 3, 4, 5].map((size) => (
           <MenuItem key={size} value={size}>{size} vs {size}</MenuItem>
         ))}
@@ -78,7 +82,7 @@ const TeamSelectScreen: React.FC = () => {
               fullWidth
             >
               <MenuItem value="">キャラクターを選択</MenuItem>
-              {characters.map((char) => (
+              {(Array.isArray(characters) ? characters : []).map((char) => ( // ✅ 配列かどうかチェック
                 <MenuItem key={char.id} value={char.id}>
                   {char.name} ({char.type} {char.class})（{char.skills.map((skill) => skill.name).join(', ')}）
                 </MenuItem>
@@ -99,7 +103,7 @@ const TeamSelectScreen: React.FC = () => {
               fullWidth
             >
               <MenuItem value="">キャラクターを選択</MenuItem>
-              {characters.map((char) => (
+              {(Array.isArray(characters) ? characters : []).map((char) => (
                 <MenuItem key={char.id} value={char.id}>
                   {char.name} ({char.type} {char.class})（{char.skills.map((skill) => skill.name).join(', ')}）
                 </MenuItem>

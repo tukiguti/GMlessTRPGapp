@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useTeamStore } from '../../store/teamStore'; // ✅ チーム管理
-import { useBattleStore } from '../../store/battleStore'; // ✅ 戦闘管理
-import { rollDice } from '../../utils/diceUtils'; // ✅ ダイスロール関数を `utils/diceUtils.ts` からインポート
+import { useTeamStore, useBattleStore } from '../store/gameStore'; // ✅ `gameStore.ts` からインポート
+import { rollDice, parseDiceNotation } from '../../utils/diceUtils';
+import { CustomCharacter } from '../../types/character';
 
 const BattleResolution: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const { blueTeam, redTeam } = useTeamStore(); // ✅ `blueTeam`, `redTeam` を `useTeamStore()` から取得
-  const { actions, hp, updateHp } = useBattleStore(); // ✅ `actions`, `hp`, `updateHp` を `useBattleStore()` から取得
+  const { blueTeam, redTeam, updateHp, hp } = useTeamStore(); // ✅ `updateHp` を使用
+  const { actions } = useBattleStore();
   const [battleLog, setBattleLog] = useState<string[]>([]);
 
   useEffect(() => {
     const log: string[] = [];
 
-    const resolveAttack = (attacker: any, defender: any) => {
-      const attackRoll = rollDice(attacker.attack); // ✅ `attack` の値を使用
-      const dodgeRoll = rollDice(defender.dodge); // ✅ `dodge` の値を使用
+    const resolveAttack = (attacker: CustomCharacter, defender: CustomCharacter) => {
+      const attackValue = parseDiceNotation(attacker.attack);
+      const dodgeValue = parseDiceNotation(defender.dodge);
+      const attackRoll = rollDice(attackValue);
+      const dodgeRoll = rollDice(dodgeValue);
+
       log.push(`${attacker.name} (攻撃: ${attackRoll}) vs ${defender.name} (回避: ${dodgeRoll})`);
 
       if (attackRoll > dodgeRoll) {
-        const newHP = hp[defender.id] - 1;
+        const newHP = (hp[defender.id] || defender.hp) - 1; // ✅ `hp` を利用して現在のHPを取得
         updateHp(defender.id, newHP);
         log.push(`⚔️ ${attacker.name} が ${defender.name} にダメージ！ 残りHP: ${newHP}`);
       } else {

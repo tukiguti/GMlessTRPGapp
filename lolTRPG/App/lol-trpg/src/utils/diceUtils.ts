@@ -1,16 +1,16 @@
-export const rollDice = (diceFormula: string): number => {
-  // `3D6+2` のような形式をパース
-  const match = diceFormula.match(/(\d+)D(\d+)([+-]?\d+)?/);
-  if (!match) return 0; // 無効なフォーマットなら 0 を返す
+// 🎲 "3D6" → 数値を計算
+export const parseDiceNotation = (notation: string): number => {
+  const match = notation.match(/^(\d+)D(\d+)(\+(\d+))?$/);
+  if (!match) throw new Error(`Invalid dice notation: ${notation}`);
 
-  const num = parseInt(match[1], 10);
-  const sides = parseInt(match[2], 10);
-  const modifier = match[3] ? parseInt(match[3], 10) : 0; // 修正値がない場合は 0
+  const diceCount = parseInt(match[1], 10); // 🎲 例: "3D6" → 3
+  const diceSides = parseInt(match[2], 10); // 🎲 例: "3D6" → 6
+  const bonus = match[4] ? parseInt(match[4], 10) : 0; // 🎲 例: "1D6+4" → +4
 
-  let total = 0;
-  for (let i = 0; i < num; i++) {
-    total += Math.floor(Math.random() * sides) + 1;
-  }
+  return [...Array(diceCount)].reduce((sum) => sum + Math.floor(Math.random() * diceSides) + 1, 0) + bonus;
+};
 
-  return total + modifier;
+// 🎲 ダイスロール関数 (数値を受け取る)
+export const rollDice = (value: number): number => {
+  return value;
 };

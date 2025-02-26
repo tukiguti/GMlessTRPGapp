@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGamePhaseStore } from '../store/gamePhaseStore'; // ✅ フェーズ管理
+import { useGamePhaseStore } from '../components/store/gamePhaseStore'; // ✅ フェーズ管理
 import LanePhaseScreen from './LanePhaseScreen';
 import SiegePhaseScreen from './SiegePhaseScreen';
 
