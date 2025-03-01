@@ -1,0 +1,870 @@
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/AttackPage.tsx",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール '../../store/utils/diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 6,
+	"startColumn": 34,
+	"endLineNumber": 6,
+	"endColumn": 63
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/AttackPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'isSuccessfulRoll' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 6,
+	"startColumn": 1,
+	"endLineNumber": 6,
+	"endColumn": 64,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'itemType' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 58,
+	"startColumn": 22,
+	"endLineNumber": 58,
+	"endColumn": 30
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'character' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 93,
+	"startColumn": 34,
+	"endLineNumber": 93,
+	"endColumn": 43
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'item' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 94,
+	"startColumn": 34,
+	"endLineNumber": 94,
+	"endColumn": 38
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'character' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 98,
+	"startColumn": 30,
+	"endLineNumber": 98,
+	"endColumn": 39
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'item' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 106,
+	"startColumn": 24,
+	"endLineNumber": 106,
+	"endColumn": 28
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'character' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 106,
+	"startColumn": 30,
+	"endLineNumber": 106,
+	"endColumn": 39
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'name' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 117,
+	"startColumn": 26,
+	"endLineNumber": 117,
+	"endColumn": 30
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'type' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 118,
+	"startColumn": 26,
+	"endLineNumber": 118,
+	"endColumn": 30
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'cost' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 119,
+	"startColumn": 26,
+	"endLineNumber": 119,
+	"endColumn": 30
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'effect' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 120,
+	"startColumn": 28,
+	"endLineNumber": 120,
+	"endColumn": 34
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'item' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 149,
+	"startColumn": 31,
+	"endLineNumber": 149,
+	"endColumn": 35
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'character' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 174,
+	"startColumn": 33,
+	"endLineNumber": 174,
+	"endColumn": 42
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'item' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 189,
+	"startColumn": 32,
+	"endLineNumber": 189,
+	"endColumn": 36
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2345",
+	"severity": 8,
+	"message": "型 '{ type: string; name: string; cost: number; effect: string; icon: JSX.Element; }' の引数を型 'SetStateAction<null>' のパラメーターに割り当てることはできません。\n  型 '{ type: string; name: string; cost: number; effect: string; icon: Element; }' にはシグネチャ '(prevState: null): null' に一致するものがありません。",
+	"source": "ts",
+	"startLineNumber": 291,
+	"startColumn": 51,
+	"endLineNumber": 291,
+	"endColumn": 55
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'icon' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 403,
+	"startColumn": 33,
+	"endLineNumber": 403,
+	"endColumn": 37
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'name' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 407,
+	"startColumn": 35,
+	"endLineNumber": 407,
+	"endColumn": 39
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'effect' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 410,
+	"startColumn": 35,
+	"endLineNumber": 410,
+	"endColumn": 41
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'cost' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 413,
+	"startColumn": 44,
+	"endLineNumber": 413,
+	"endColumn": 48
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'cost' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 421,
+	"startColumn": 71,
+	"endLineNumber": 421,
+	"endColumn": 75
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'type' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 452,
+	"startColumn": 41,
+	"endLineNumber": 452,
+	"endColumn": 45
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'name' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 455,
+	"startColumn": 29,
+	"endLineNumber": 455,
+	"endColumn": 33
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'effect' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 462,
+	"startColumn": 48,
+	"endLineNumber": 462,
+	"endColumn": 54
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'cost' は型 'never' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 466,
+	"startColumn": 49,
+	"endLineNumber": 466,
+	"endColumn": 53
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'useEffect' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 2,
+	"startColumn": 20,
+	"endLineNumber": 2,
+	"endColumn": 29,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/ItemShopPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'CloseIcon' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 40,
+	"startColumn": 12,
+	"endLineNumber": 40,
+	"endColumn": 21,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/SupportPage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'supportType' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 28,
+	"startColumn": 28,
+	"endLineNumber": 28,
+	"endColumn": 39
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/SupportPage.tsx",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'supportType' は型 'PlayerAction' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 52,
+	"startColumn": 45,
+	"endLineNumber": 52,
+	"endColumn": 56
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール '../store/utils/diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 4,
+	"startColumn": 35,
+	"endLineNumber": 4,
+	"endColumn": 61
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール '../components/battle/ResultSummaryPage' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 11,
+	"startColumn": 31,
+	"endLineNumber": 11,
+	"endColumn": 71
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "7006",
+	"severity": 8,
+	"message": "パラメーター 'actionType' の型は暗黙的に 'any' になります。",
+	"source": "ts",
+	"startLineNumber": 45,
+	"startColumn": 34,
+	"endLineNumber": 45,
+	"endColumn": 44
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "型 'Character | undefined' を型 'Character' に割り当てることはできません。\n  型 'undefined' を型 'Character' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 150,
+	"startColumn": 11,
+	"endLineNumber": 150,
+	"endColumn": 19,
+	"relatedInformation": [
+		{
+			"startLineNumber": 11,
+			"startColumn": 3,
+			"endLineNumber": 11,
+			"endColumn": 11,
+			"message": "予期された型は、型 'IntrinsicAttributes & AttackPageProps' に対してここで宣言されたプロパティ 'defender' から取得されています",
+			"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/AttackPage.tsx"
+		}
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'useEffect' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 2,
+	"startColumn": 20,
+	"endLineNumber": 2,
+	"endColumn": 29,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/BattlePage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'rollDiceWithSkill' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 4,
+	"startColumn": 1,
+	"endLineNumber": 4,
+	"endColumn": 62,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール './utils/diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 9,
+	"startColumn": 68,
+	"endLineNumber": 9,
+	"endColumn": 87
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'supportType' は型 'WritableDraft<PlayerAction>' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 126,
+	"startColumn": 45,
+	"endLineNumber": 126,
+	"endColumn": 56
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "2367",
+	"severity": 8,
+	"message": "'ActionType' 型と '\"サポート\"' 型が重複していないため、この比較は意図したとおりに表示されない可能性があります。",
+	"source": "ts",
+	"startLineNumber": 143,
+	"startColumn": 23,
+	"endLineNumber": 143,
+	"endColumn": 51
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'supportType' は型 'PlayerAction' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 143,
+	"startColumn": 81,
+	"endLineNumber": 143,
+	"endColumn": 92
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'supportType' は型 'PlayerAction' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 146,
+	"startColumn": 66,
+	"endLineNumber": 146,
+	"endColumn": 77
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'addBonusToFormula' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 9,
+	"startColumn": 20,
+	"endLineNumber": 9,
+	"endColumn": 37,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'rollDiceWithModifiers' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 9,
+	"startColumn": 39,
+	"endLineNumber": 9,
+	"endColumn": 60,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'handleSidePush' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 10,
+	"startColumn": 53,
+	"endLineNumber": 10,
+	"endColumn": 67,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'healCharacter' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 13,
+	"startColumn": 32,
+	"endLineNumber": 13,
+	"endColumn": 45,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/gameStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'damageCharacter' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 13,
+	"startColumn": 47,
+	"endLineNumber": 13,
+	"endColumn": 62,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/battleSlice.ts",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール '../utils/diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 49,
+	"endLineNumber": 3,
+	"endColumn": 69
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/battleSlice.ts",
+	"owner": "typescript",
+	"code": "2339",
+	"severity": 8,
+	"message": "プロパティ 'itemEffect' は型 'TurnResult' に存在しません。",
+	"source": "ts",
+	"startLineNumber": 68,
+	"startColumn": 14,
+	"endLineNumber": 68,
+	"endColumn": 24
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/diceSlice.ts",
+	"owner": "typescript",
+	"code": "2739",
+	"severity": 8,
+	"message": "型 '{ dice: string; values: never[]; total: number; type: string; }' には 型 'DiceRoll' からの次のプロパティがありません: diceType, diceCount, rolls, modifier",
+	"source": "ts",
+	"startLineNumber": 6,
+	"startColumn": 9,
+	"endLineNumber": 6,
+	"endColumn": 15
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/diceSlice.ts",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'result.values' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 23,
+	"startColumn": 7,
+	"endLineNumber": 23,
+	"endColumn": 20
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/diceSlice.ts",
+	"owner": "typescript",
+	"code": "18048",
+	"severity": 8,
+	"message": "'result.values' は 'undefined' の可能性があります。",
+	"source": "ts",
+	"startLineNumber": 27,
+	"startColumn": 20,
+	"endLineNumber": 27,
+	"endColumn": 33
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/diceSlice.ts",
+	"owner": "typescript",
+	"code": "2739",
+	"severity": 8,
+	"message": "型 '{ dice: string; values: any[]; total: number; type: string; skillModifier: string; }' には 型 'DiceRoll' からの次のプロパティがありません: diceType, diceCount, rolls, modifier",
+	"source": "ts",
+	"startLineNumber": 49,
+	"startColumn": 7,
+	"endLineNumber": 49,
+	"endColumn": 13
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/diceSlice.ts",
+	"owner": "typescript",
+	"code": "2488",
+	"severity": 8,
+	"message": "型 'number[] | undefined' には、反復子を返す '[Symbol.iterator]()' メソッドが必要です。",
+	"source": "ts",
+	"startLineNumber": 66,
+	"startColumn": 19,
+	"endLineNumber": 66,
+	"endColumn": 36
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/phaseSlice.ts",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "型 '\"RESULT\"' を型 'GamePhase' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 16,
+	"startColumn": 14,
+	"endLineNumber": 16,
+	"endColumn": 19,
+	"relatedInformation": [
+		{
+			"startLineNumber": 10,
+			"startColumn": 6,
+			"endLineNumber": 10,
+			"endColumn": 11,
+			"message": "予期された型は、型 '{ phase: GamePhase; round: number; gameEnded: boolean; }' に対してここで宣言されたプロパティ 'phase' から取得されています",
+			"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/phaseSlice.ts"
+		}
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/phaseSlice.ts",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "型 '\"OBJECT_FIGHT\"' を型 'GamePhase' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 28,
+	"startColumn": 7,
+	"endLineNumber": 28,
+	"endColumn": 15
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/phaseSlice.ts",
+	"owner": "typescript",
+	"code": "2367",
+	"severity": 8,
+	"message": "'\"CHARACTER_CREATION\" | \"TEAM_FORMATION\" | \"END\"' 型と '\"OBJECT_FIGHT\"' 型が重複していないため、この比較は意図したとおりに表示されない可能性があります。",
+	"source": "ts",
+	"startLineNumber": 32,
+	"startColumn": 14,
+	"endLineNumber": 32,
+	"endColumn": 45
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/supportSlice.ts",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール '../utils/diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 26,
+	"endLineNumber": 3,
+	"endColumn": 46
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/slices/supportSlice.ts",
+	"owner": "typescript",
+	"code": "2322",
+	"severity": 8,
+	"message": "型 '\"サポート\"' を型 'ActionType' に割り当てることはできません。",
+	"source": "ts",
+	"startLineNumber": 18,
+	"startColumn": 5,
+	"endLineNumber": 18,
+	"endColumn": 11,
+	"relatedInformation": [
+		{
+			"startLineNumber": 178,
+			"startColumn": 3,
+			"endLineNumber": 178,
+			"endColumn": 9,
+			"message": "予期された型は、型 'TurnResult' に対してここで宣言されたプロパティ 'action' から取得されています",
+			"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/models/types.ts"
+		}
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/utils/itemUtils.ts",
+	"owner": "typescript",
+	"code": "2307",
+	"severity": 8,
+	"message": "モジュール './diceUtils' またはそれに対応する型宣言が見つかりません。",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 35,
+	"endLineNumber": 3,
+	"endColumn": 48
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/battle/PhaseIntroPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'Box' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 2,
+	"startColumn": 10,
+	"endLineNumber": 2,
+	"endColumn": 13,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/character/BasicInfoForm.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'FormHelperText' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 10,
+	"startColumn": 3,
+	"endLineNumber": 10,
+	"endColumn": 17,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/components/character/CharacterPreview.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'Box' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 3,
+	"startColumn": 5,
+	"endLineNumber": 3,
+	"endColumn": 8,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/CharacterCreationPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'skillName' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 19,
+	"startColumn": 10,
+	"endLineNumber": 19,
+	"endColumn": 19,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/CharacterCreationPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'setSkillName' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 19,
+	"startColumn": 21,
+	"endLineNumber": 19,
+	"endColumn": 33,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/CharacterCreationPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'skillType' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 20,
+	"startColumn": 10,
+	"endLineNumber": 20,
+	"endColumn": 19,
+	"tags": [
+		1
+	]
+},{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/CharacterCreationPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'setSkillType' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 20,
+	"startColumn": 21,
+	"endLineNumber": 20,
+	"endColumn": 33,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/CharacterListPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'importCharacterFromJson' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 36,
+	"startColumn": 5,
+	"endLineNumber": 36,
+	"endColumn": 28,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/HomePage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'Box' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 1,
+	"startColumn": 10,
+	"endLineNumber": 1,
+	"endColumn": 13,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/pages/TeamFormationPage.tsx",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'Divider' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 19,
+	"startColumn": 3,
+	"endLineNumber": 19,
+	"endColumn": 10,
+	"tags": [
+		1
+	]
+}]
+[{
+	"resource": "/c:/Users/narum/Documents/GitHub/GMlessTRPGapp/lolTRPG/App/lol-trpg/src/store/teamStore.ts",
+	"owner": "typescript",
+	"code": "6133",
+	"severity": 4,
+	"message": "'Character' が宣言されていますが、その値が読み取られることはありません。",
+	"source": "ts",
+	"startLineNumber": 4,
+	"startColumn": 10,
+	"endLineNumber": 4,
+	"endColumn": 19,
+	"tags": [
+		1
+	]
+}]

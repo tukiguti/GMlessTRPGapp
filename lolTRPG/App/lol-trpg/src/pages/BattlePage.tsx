@@ -1,12 +1,12 @@
-// src/pages/BattlePage.tsx
-import { useEffect, useState, useRef } from 'react';
+// pages/BattlePage.tsx
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Button, 
-  Typography, 
-  Paper, 
-  Grid, 
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -14,615 +14,559 @@ import {
   List,
   ListItem,
   ListItemText,
-  Menu,
-  MenuItem,
-  Divider,
-  Alert,
   Snackbar,
-  ListItemButton
+  Alert
 } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useGameStore, getAvailableActions, getAvailableTargets } from '../store/gameStore';
-import { Character, ActionType, SupportActionType } from '../models/types';
+import { useGameStore } from '../store/gameStore';
+import { ActionType, Character, SupportActionType } from '../models/types';
 import PageLayout from '../components/ui/PageLayout';
+import CharacterTeamPanel from '../components/battle/CharacterTeamPanel';
+import ActionPhaseContainer from '../components/battle/ActionPhaseContainer';
 
-// バトルページコンポーネント
+// 戦闘結果の型定義
+interface BattleResult {
+  attackerId?: string;
+  defenderId?: string;
+  attackRoll?: any;
+  defenseRoll?: any;
+  success?: boolean;
+}
+
+// アクションフェーズを表す型
+type ActionPhase =
+  | 'ACTION_SELECTION' // 行動選択フェーズ
+  | 'INTRO'      // フェーズ導入
+  | 'RETREAT'    // リコール処理
+  | 'FARMING'    // ファーム処理
+  | 'SUPPORT'    // サポート処理
+  | 'ATTACK'     // アタック処理
+  | 'ITEM_SHOP'  // アイテム購入
+  | 'SUMMARY';   // 結果サマリー
+
 const BattlePage = () => {
   const navigate = useNavigate();
-  const { 
-    phase, 
-    round, 
-    blueTeamCharacters, 
+
+  // ゲームストアから必要な情報を取得
+  const {
+    phase,
+    round,
+    blueTeamCharacters,
     redTeamCharacters,
     blueTeamTowers,
     redTeamTowers,
     currentActions,
-    actionTargets,
-    turnResults,
-    isPlayerTurn,
-    initializeGame,
     setCharacterAction,
     setActionTarget,
-    setSupportAction,
     executeTurn,
-    getOpponentByRole,
     advancePhase,
+    initializeGame,
     resetGame
   } = useGameStore();
-  
-  // アクションメニューの状態
-  const [actionMenuAnchor, setActionMenuAnchor] = useState<null | HTMLElement>(null);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
-  
-  // サポートアクションメニューの状態
-  const [supportMenuAnchor, setSupportMenuAnchor] = useState<null | HTMLElement>(null);
-  const [supportTargetId, setSupportTargetId] = useState<string | null>(null);
-  const supportTypeRef = useRef<SupportActionType | null>(null);
-  
-  // ターゲット選択ダイアログの状態
+
+  // 現在のアクションフェーズ - 初期値を ACTION_SELECTION に設定
+  const [actionPhase, setActionPhase] = useState<ActionPhase>('ACTION_SELECTION');
+
+  // アタック対象のキャラクターのインデックス
+  const [currentAttackIndex, setCurrentAttackIndex] = useState(0);
+
+  // ダイスロール結果
+  const [diceResults, setDiceResults] = useState<BattleResult[]>([]);
+
+  // アクション選択ダイアログ
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+
+  // サポートアクション選択ダイアログ
+  const [supportDialogOpen, setSupportDialogOpen] = useState(false);
+
+  // ターゲット選択ダイアログ
   const [targetDialogOpen, setTargetDialogOpen] = useState(false);
-  const [possibleTargets, setPossibleTargets] = useState<Character[]>([]);
-  
-  // 結果表示ダイアログの状態
-  const [resultDialogOpen, setResultDialogOpen] = useState(false);
-  
-  // エラー表示
-  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedAction, setSelectedAction] = useState<ActionType | null>(null);
+  const [selectedSupportType, setSelectedSupportType] = useState<SupportActionType | null>(null);
+
+  // エラーメッセージ
+  const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
-  
-  // 初期化
+
+  // 初期化処理
   useEffect(() => {
+    // ゲームの状態を初期化
     initializeGame();
   }, [initializeGame]);
+
+  // 次のフェーズに進む
+  const handleNextPhase = useCallback(() => {
+    console.log('handleNextPhase - 現在のフェーズ:', actionPhase);
+    console.log('handleNextPhase - 現在のアクション:', useGameStore.getState().currentActions);
   
-  // アクションメニューを開く
-  const handleOpenActionMenu = (event: React.MouseEvent<HTMLElement>, characterId: string) => {
-    // すでにアクションが選択されていたら何もしない
-    if (currentActions[characterId]) return;
-    
-    setActionMenuAnchor(event.currentTarget);
-    setSelectedCharacterId(characterId);
-  };
-  
-  // アクションメニューを閉じる
-  const handleCloseActionMenu = () => {
-    setActionMenuAnchor(null);
-    setSelectedCharacterId(null);
-  };
-  
-  // サポートサブアクションを直接選択するハンドラ
-  const handleSelectSupportSubAction = (supportType: SupportActionType) => {
-    if (!selectedCharacterId) return;
-    
-    // アクションを「サポート」に設定
-    setCharacterAction(selectedCharacterId, 'サポート');
-    
-    // 選択可能なターゲットを設定
-    const character = [...blueTeamCharacters, ...redTeamCharacters].find(
-      c => c.id === selectedCharacterId
-    );
-    
-    if (character) {
-      let targets: Character[] = [];
-      
-      // サブアクションタイプに応じてターゲットをフィルタリング
-      if (supportType === 'エンチャント' || supportType === 'タンク') {
-        // 味方のみを対象にする
-        targets = [...blueTeamCharacters, ...redTeamCharacters].filter(
-          c => c.team === character.team && c.id !== character.id
-        );
-      } else if (supportType === 'フック') {
-        // 敵のみを対象にする
-        targets = [...blueTeamCharacters, ...redTeamCharacters].filter(
-          c => c.team !== character.team
-        );
-      }
-      
-      // サポートタイプを一時的に保存
-      setSupportTargetId(null);
-      supportTypeRef.current = supportType;
-      
-      setPossibleTargets(targets);
+    switch (actionPhase) {
+      case 'ACTION_SELECTION':
+        // 行動選択が完了したら、イントロフェーズへ
+        console.log('ACTION_SELECTION → INTRO');
+        setActionPhase('INTRO');
+        break;
+      case 'INTRO':
+        // アクション選択が完了したら、まずリコール処理へ
+        console.log('INTRO → RETREAT (executeTurn実行前)');
+        executeTurn(); // ターン実行
+        console.log('executeTurn実行後のアクション:', useGameStore.getState().currentActions);
+        setActionPhase('RETREAT');
+        break;
+      case 'RETREAT':
+        setActionPhase('FARMING');
+        break;
+      case 'FARMING':
+        setActionPhase('SUPPORT');
+        break;
+      case 'SUPPORT':
+        setActionPhase('ATTACK');
+        setCurrentAttackIndex(0);
+        break;
+      case 'ATTACK':
+        // アタッカーのリストを取得
+        const attackers = getOrderedAttackers();
+        // すべてのアタックが終了したらアイテムショップへ
+        if (currentAttackIndex >= attackers.length - 1) {
+          setActionPhase('ITEM_SHOP');
+        } else {
+          setCurrentAttackIndex(currentAttackIndex + 1);
+        }
+        break;
+      case 'ITEM_SHOP':
+        setActionPhase('SUMMARY');
+        break;
+      case 'SUMMARY':
+        // 結果表示後、次のラウンドへ
+        advancePhase();
+        // 次のラウンドは行動選択から始める
+        setActionPhase('ACTION_SELECTION');
+        // ダイス結果をリセット
+        setDiceResults([]);
+        break;
+    }
+  }, [actionPhase, currentAttackIndex, executeTurn, advancePhase]);
+
+  // 攻撃順序に基づいたキャラクターリスト
+  const getOrderedAttackers = useCallback((): Character[] => {
+    const attackOrder = [
+      { team: 'BLUE', role: 'TOP' },
+      { team: 'BLUE', role: 'JG' },
+      { team: 'BLUE', role: 'MID' },
+      { team: 'BLUE', role: 'ADC' },
+      { team: 'RED', role: 'TOP' },
+      { team: 'RED', role: 'JG' },
+      { team: 'RED', role: 'MID' },
+      { team: 'RED', role: 'ADC' }
+    ];
+
+    return attackOrder
+      // pages/BattlePage.tsx (続き)
+      .map(({ team, role }) =>
+        [...blueTeamCharacters, ...redTeamCharacters].find(
+          c => c.team === team && c.role === role &&
+            currentActions[c.id]?.actionType === 'アタック'
+        )
+      )
+      .filter((character): character is Character => character !== undefined);
+  }, [blueTeamCharacters, redTeamCharacters, currentActions]);
+
+  // キャラクターのアクションを選択
+  const handleSelectCharacterForAction = useCallback((character: Character) => {
+    setSelectedCharacter(character);
+
+    // SUPクラスのみサポートまたはリコールが選択可能
+    if (character.class === 'サポート') {
+      setActionDialogOpen(true);
+    } else {
+      // それ以外のクラスは通常のアクション選択ダイアログを表示
+      setActionDialogOpen(true);
+    }
+  }, []);
+
+  // アクションをキャンセル/やり直し
+  const handleCancelAction = useCallback((character: Character) => {
+    // アクションをリセット
+    const action = currentActions[character.id];
+    if (action) {
+      // ゲームストアからアクションを削除
+      setCharacterAction(character.id, undefined as any);
+    }
+  }, [currentActions, setCharacterAction]);
+
+  // アクションを選択
+  const handleSelectAction = useCallback((action: ActionType) => {
+    if (!selectedCharacter) return;
+
+    // SUPクラスの場合、サポートアクションの特殊処理
+    if (selectedCharacter.class === 'サポート' && action === 'サポート') {
+      setActionDialogOpen(false);
+      setSupportDialogOpen(true);
+      return;
+    }
+
+    // アクションが選択できるか確認（サポートクラスの制限）
+    if (selectedCharacter.class === 'サポート' &&
+      action !== 'サポート' && action !== 'リコール') {
+      setErrorMessage("サポートクラスはサポートまたはリコールのみ選択できます");
+      setShowError(true);
+      setActionDialogOpen(false);
+      return;
+    }
+
+    setCharacterAction(selectedCharacter.id, action);
+    setActionDialogOpen(false);
+
+    // アタックアクションの場合はターゲット選択
+    if (action === 'アタック') {
+      setSelectedAction(action);
       setTargetDialogOpen(true);
     }
-    
-    handleCloseActionMenu();
-  };
-  
-  // アクションを選択
-  const handleSelectAction = (action: ActionType) => {
-    if (selectedCharacterId) {
-      if (action === 'アタック') {
-        // 攻撃の場合はターゲット選択が必要
-        setCharacterAction(selectedCharacterId, action);
-        
-        // 選択可能なターゲットを設定
-        const character = [...blueTeamCharacters, ...redTeamCharacters].find(
-          c => c.id === selectedCharacterId
-        );
-        
-        if (character) {
-          // アタック可能なターゲットを取得
-          const targets = getAvailableTargets(character, phase, [...blueTeamCharacters, ...redTeamCharacters]);
-          setPossibleTargets(targets);
-          setTargetDialogOpen(true);
-        }
-      } else {
-        // その他のアクションはそのまま設定
-        setCharacterAction(selectedCharacterId, action);
-      }
-    }
-    
-    handleCloseActionMenu();
-  };
-  
-  // ターゲットを選択
-  const handleSelectTarget = (targetId: string) => {
-    if (selectedCharacterId) {
-      const action = currentActions[selectedCharacterId];
-      
-      if (action && action.actionType === 'サポート' && supportTypeRef.current) {
-        // サポートアクションの場合、サブアクションと対象を直接設定
-        setSupportAction(selectedCharacterId, supportTypeRef.current, targetId);
-        setActionTarget(selectedCharacterId, targetId);
-        // リファレンスをクリア
-        supportTypeRef.current = null;
-      } else {
-        // 他のアクションはそのままターゲット設定
-        setActionTarget(selectedCharacterId, targetId);
-      }
-    }
-    
-    setTargetDialogOpen(false);
-  };
-  
-  // ターンを実行
-  const handleExecuteTurn = () => {
-    // 全キャラクターがアクションを選択しているか確認
-    const allActionsSelected = [...blueTeamCharacters, ...redTeamCharacters].every(
-      character => currentActions[character.id]
-    );
-    
-    if (allActionsSelected) {
-      executeTurn();
-      setResultDialogOpen(true);
-    } else {
-      setErrorMessage('全てのキャラクターのアクションを選択してください');
-      setShowError(true);
-    }
-  };
-  
-  // 次のラウンドへ
-  const handleNextRound = () => {
-    setResultDialogOpen(false);
-    advancePhase();
-  };
-  
-  // アクションラベルを取得
-  const getActionLabel = (characterId: string) => {
-    const action = currentActions[characterId];
-    if (!action) return 'アクションを選択';
-    
-    // ターゲットがある場合は表示
-    if (action.targetId) {
-      const target = [...blueTeamCharacters, ...redTeamCharacters].find(
-        c => c.id === action.targetId
-      );
-      
-      if (target) {
-        if (action.actionType === 'サポート' && action.supportType) {
-          // サポートアクションの場合、サブアクションとターゲットを表示
-          return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="body2" fontWeight="bold">
-                {action.supportType}
-              </Typography>
-              <Typography variant="caption" sx={{ 
-                color: target.team === 'BLUE' ? 'primary.main' : 'error.main',
-                fontWeight: 'bold'
-              }}>
-                → {target.name}
-              </Typography>
-            </Box>
-          );
-        } else {
-          // 通常のアクション
-          return `${action.actionType} → ${target.name}`;
-        }
-      }
-    }
-    
-    return action.actionType;
-  };
-  
-  // キャラクターカード
-  const renderCharacterCard = (character: Character, isBlueTeam: boolean) => {
-    const isActionSelected = !!currentActions[character.id];
-    
-    // キャラクタークラスに応じて利用可能なアクションを決定
-    const availableActions = getAvailableActions(character, phase);
-    
-    return (
-      <Paper
-        id={character.id}
-        key={character.id}
-        variant="outlined"
-        sx={{
-          p: 2,
-          mb: 2,
-          backgroundColor: isActionSelected ? (isBlueTeam ? 'rgba(33, 150, 243, 0.1)' : 'rgba(244, 67, 54, 0.1)') : 'white'
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="body1" fontWeight="bold">
-            {character.role}: {character.name}
-          </Typography>
-          <Typography variant="body2" color={character.hp <= 1 ? 'error' : 'text.primary'}>
-            HP: {character.hp}/{character.maxHp}
-          </Typography>
-        </Box>
-        
-        <Typography variant="body2" color="text.secondary">
-          FP: {character.fp} | {character.class}
-        </Typography>
-        
-        <Typography variant="body2" color="text.secondary">
-          攻撃: {character.attackDice} | 回避: {character.avoidDice}
-        </Typography>
-        
-        {character.skills.length > 0 && (
-          <Typography variant="body2" color="text.secondary">
-            スキル: {character.skills[0].name}
-          </Typography>
-        )}
-        
-        <Button
-          variant={isActionSelected ? "contained" : "outlined"}
-          color={isActionSelected ? (isBlueTeam ? "primary" : "error") : "inherit"}
-          size="small"
-          fullWidth
-          sx={{ 
-            mt: 1,
-            minHeight: '40px', // ボタンの高さを固定して、内容が増えても安定して表示されるようにする
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}
-          disabled={!isPlayerTurn || isActionSelected || availableActions.length === 0}
-          onClick={(e) => handleOpenActionMenu(e, character.id)}
-        >
-          {getActionLabel(character.id)}
-        </Button>
-      </Paper>
-    );
-  };
-  
-  // アクションメニューの内容
-  const renderActionMenu = () => {
-    if (!selectedCharacterId) return null;
-    
-    const character = [...blueTeamCharacters, ...redTeamCharacters].find(
-      c => c.id === selectedCharacterId
-    );
-    
-    if (!character) return null;
-    
-    // キャラクターのクラスとフェーズに応じて利用可能なアクションを決定
-    const availableActions = getAvailableActions(character, phase);
-    
-    // サポートのみの場合、サブアクションを直接表示する
-    if (character.class === 'サポート' && availableActions.includes('サポート')) {
-      return (
-        <Menu
-          anchorEl={actionMenuAnchor}
-          open={Boolean(actionMenuAnchor)}
-          onClose={handleCloseActionMenu}
-        >
-          <MenuItem disabled>
-            <Typography variant="subtitle2" fontWeight="bold">サポートアクション</Typography>
-          </MenuItem>
-          <MenuItem onClick={() => handleSelectSupportSubAction('エンチャント')}>
-            エンチャント（味方バフ）
-          </MenuItem>
-          <MenuItem onClick={() => handleSelectSupportSubAction('フック')}>
-            フック（敵デバフ）
-          </MenuItem>
-          <MenuItem onClick={() => handleSelectSupportSubAction('タンク')}>
-            タンク（攻撃肩代わり）
-          </MenuItem>
-          <Divider />
-          {availableActions.filter(a => a !== 'サポート').map(action => (
-            <MenuItem key={action} onClick={() => handleSelectAction(action)}>
-              {action}
-            </MenuItem>
-          ))}
-        </Menu>
-      );
-    }
-    
-    // 通常のアクションメニュー
-    return (
-      <Menu
-        anchorEl={actionMenuAnchor}
-        open={Boolean(actionMenuAnchor)}
-        onClose={handleCloseActionMenu}
-      >
-        {availableActions.map(action => (
-          <MenuItem key={action} onClick={() => handleSelectAction(action)}>
-            {action}
-          </MenuItem>
-        ))}
-      </Menu>
-    );
-  };
-  
-  return (
-    <PageLayout maxContentWidth="1600px" fullWidth>
-      <Box sx={{ width: '100%' }}>
-        <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-          {/* ヘッダー部分を中央揃えに変更 */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h5" gutterBottom>
-              {phase === 'LANE_BATTLE' ? 'レーン戦フェーズ' : 'チーム戦フェーズ'} - ラウンド {round}
-            </Typography>
-            
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<PlayArrowIcon />}
-              disabled={!isPlayerTurn}
-              onClick={handleExecuteTurn}
-              size="large"
-              sx={{ mt: 2, px: 4, py: 1 }} // ボタンのサイズを大きくして目立たせる
-            >
-              判定開始
-            </Button>
-          </Box>
-          
-          <Divider sx={{ mb: 3 }} />
-          
-          <Grid container spacing={3}>
-            {/* BLUEチーム */}
-            <Grid item xs={12} md={5}>
-              <Paper sx={{ p: 3, bgcolor: 'rgba(33, 150, 243, 0.08)', borderRadius: 2, height: '100%' }}>
-                <Typography variant="h6" color="primary.dark" gutterBottom>
-                  BLUE TEAM (タワー: {blueTeamTowers})
-                </Typography>
-                
-                {blueTeamCharacters.map(character => renderCharacterCard(character, true))}
-              </Paper>
-            </Grid>
-            
-            {/* 中央 */}
-            <Grid item xs={12} md={2} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<PlayArrowIcon />}
-              disabled={!isPlayerTurn}
-              onClick={handleExecuteTurn}
-              size="large"
-              sx={{ mt: 2, px: 4, py: 1 }} // ボタンのサイズを大きくして目立たせる
-            >
-              判定開始
-            </Button>
+  }, [selectedCharacter, setCharacterAction]);
 
-              <Button
-                variant="outlined"
-                color="inherit"
-                onClick={() => navigate('/team-formation')}
-                sx={{ mb: 2, width: '100%' }}
-              >
-                チーム編成に戻る
-              </Button>
-              
-              <Button
-                variant="outlined"
-                color="warning"
-                onClick={resetGame}
-                sx={{ width: '100%' }}
-              >
-                リセット
-              </Button>
-            </Grid>
-            
-            {/* REDチーム */}
+  // サポートタイプを選択
+  const handleSelectSupportType = useCallback((supportType: SupportActionType) => {
+    if (!selectedCharacter) return;
+
+    setCharacterAction(selectedCharacter.id, 'サポート');
+    setSupportDialogOpen(false);
+
+    // サポートタイプに応じたターゲット選択
+    setSelectedAction('サポート');
+    setSelectedSupportType(supportType);
+    setTargetDialogOpen(true);
+  }, [selectedCharacter, setCharacterAction]);
+
+  // ターゲットを選択
+  const handleSelectTarget = useCallback((targetId: string) => {
+    if (!selectedCharacter) return;
+
+    // サポートタイプの場合、サポートタイプも設定
+    if (selectedAction === 'サポート' && selectedSupportType) {
+      // サポートタイプを設定する処理（gameStoreにメソッドを追加する必要あり）
+      const gameStore = useGameStore.getState();
+      if ('setSupportAction' in gameStore) {
+        (gameStore as any).setSupportAction(
+          selectedCharacter.id,
+          selectedSupportType,
+          targetId
+        );
+      } else {
+        // 互換性のためフォールバック
+        setActionTarget(selectedCharacter.id, targetId);
+      }
+    } else {
+      setActionTarget(selectedCharacter.id, targetId);
+    }
+
+    setTargetDialogOpen(false);
+    setSelectedCharacter(null);
+    setSelectedAction(null);
+    setSelectedSupportType(null);
+  }, [selectedCharacter, selectedAction, selectedSupportType, setActionTarget]);
+
+  // 選択可能なターゲットを取得 (レーン戦フェーズのルールを適用)
+  const getPossibleTargets = useCallback((): Character[] => {
+    if (!selectedCharacter || !selectedAction) return [];
+
+    // アタックアクションの場合
+    if (selectedAction === 'アタック') {
+      // 敵チームのキャラクターを取得
+      const enemyTeam = selectedCharacter.team === 'BLUE' ? redTeamCharacters : blueTeamCharacters;
+
+      // レーン戦フェーズの特殊ルール
+      if (phase === 'LANE_BATTLE') {
+        switch (selectedCharacter.role) {
+          case 'TOP':
+            // TOPはTOPのみをアタック可能
+            return enemyTeam.filter(c => c.role === 'TOP');
+          case 'JG':
+            // JGはTOP, JG, MID, ADCをアタック可能
+            return enemyTeam.filter(c => c.role !== 'SUP');
+          case 'MID':
+            // MIDはMIDのみをアタック可能
+            return enemyTeam.filter(c => c.role === 'MID');
+          case 'ADC':
+            // ADCはADCのみをアタック可能
+            return enemyTeam.filter(c => c.role === 'ADC');
+          default:
+            return [];
+        }
+      } else {
+        // チーム戦フェーズではすべての敵がターゲット可能
+        return enemyTeam;
+      }
+    }
+    // サポートアクションの場合
+    else if (selectedAction === 'サポート' && selectedSupportType) {
+      const teamCharacters = selectedCharacter.team === 'BLUE' ? blueTeamCharacters : redTeamCharacters;
+      const enemyTeam = selectedCharacter.team === 'BLUE' ? redTeamCharacters : blueTeamCharacters;
+
+      switch (selectedSupportType) {
+        case 'エンチャント':
+        case 'タンク':
+          // 味方のみ対象（自分以外）
+          return teamCharacters.filter(c => c.id !== selectedCharacter.id);
+        case 'フック':
+          // 敵のみ対象
+          return enemyTeam;
+        default:
+          return [];
+      }
+    }
+
+    return [];
+  }, [selectedCharacter, selectedAction, selectedSupportType, phase, blueTeamCharacters, redTeamCharacters]);
+
+  // 中央コンテンツを取得
+  const getCenterContent = useCallback(() => {
+    if (actionPhase === 'ACTION_SELECTION') {
+      return (
+        <Box sx={{ textAlign: 'center', p: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleNextPhase}
+            disabled={
+              [...blueTeamCharacters, ...redTeamCharacters].some(
+                character => !currentActions[character.id]
+              )
+            }
+            sx={{ px: 4, py: 1.5 }}
+          >
+            判定開始
+          </Button>
+        </Box>
+      );
+    } else {
+      return (
+        <ActionPhaseContainer
+          actionPhase={actionPhase}
+          onNextPhase={handleNextPhase}
+          onDiceRoll={(results) => {
+            setDiceResults([...diceResults, results]);
+          }}
+          diceResults={diceResults}
+          currentAttackIndex={currentAttackIndex}
+        />
+      );
+    }
+  }, [
+    actionPhase,
+    handleNextPhase,
+    blueTeamCharacters,
+    redTeamCharacters,
+    currentActions,
+    diceResults,
+    currentAttackIndex
+  ]);
+
+  // バトルビューをレンダリング
+  const renderBattleView = () => {
+    return (
+      <Box sx={{ width: '100%', p: 2 }}>
+        <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+          <Typography variant="h5" align="center" gutterBottom>
+            {phase === 'LANE_BATTLE' ? 'レーン戦フェーズ' : 'チーム戦フェーズ'} ラウンド：{round}
+          </Typography>
+
+          <Grid container spacing={2}>
+            {/* BLUE TEAM - 左側 */}
             <Grid item xs={12} md={5}>
-              <Paper sx={{ p: 3, bgcolor: 'rgba(244, 67, 54, 0.08)', borderRadius: 2, height: '100%' }}>
-                <Typography variant="h6" color="error.dark" gutterBottom>
-                  RED TEAM (タワー: {redTeamTowers})
-                </Typography>
-                
-                {redTeamCharacters.map(character => renderCharacterCard(character, false))}
-              </Paper>
+              <CharacterTeamPanel
+                teamName="BLUE TEAM"
+                towers={blueTeamTowers}
+                characters={blueTeamCharacters}
+                teamColor="primary"
+                showActionButtons={actionPhase === 'ACTION_SELECTION'}
+                onSelectActionForCharacter={handleSelectCharacterForAction}
+                onCancelAction={handleCancelAction}
+              />
+            </Grid>
+
+            {/* 中央コンテンツ */}
+            <Grid item xs={12} md={2} sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              {getCenterContent()}
+            </Grid>
+
+            {/* RED TEAM - 右側 */}
+            <Grid item xs={12} md={5}>
+              <CharacterTeamPanel
+                teamName="RED TEAM"
+                towers={redTeamTowers}
+                characters={redTeamCharacters}
+                teamColor="error"
+                showActionButtons={actionPhase === 'ACTION_SELECTION'}
+                onSelectActionForCharacter={handleSelectCharacterForAction}
+                onCancelAction={handleCancelAction}
+              />
             </Grid>
           </Grid>
+
+          {/* 下部コントロールボタン */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, gap: 2 }}>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => navigate('/team-formation')}
+            >
+              チーム編成に戻る
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={resetGame}
+            >
+              リセット
+            </Button>
+          </Box>
         </Paper>
       </Box>
-      
-      {/* アクションメニュー */}
-      {renderActionMenu()}
-      
+    );
+  };
+
+  // 指定されたキャラクターに対して使用可能なアクションを取得
+  const getAvailableActions = useCallback((character: Character): ActionType[] => {
+    if (character.class === 'サポート') {
+      return ['サポート', 'リコール'];
+    }
+
+    return ['ファーム', 'アタック', 'リコール'];
+  }, []);
+
+  return (
+    <PageLayout maxContentWidth="1400px">
+      {renderBattleView()}
+
+      {/* アクション選択ダイアログ */}
+      <Dialog
+        open={actionDialogOpen}
+        onClose={() => setActionDialogOpen(false)}
+      >
+        <DialogTitle>
+          アクションを選択 - {selectedCharacter?.name}
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            {selectedCharacter && getAvailableActions(selectedCharacter).map((action) => (
+              <ListItem
+                key={action}
+                sx={{ cursor: 'pointer' }}
+              >
+                <ListItemText
+                  primary={action}
+                  secondary={
+                    action === 'ファーム' ? 'FPを獲得する (+5 FP)' :
+                      action === 'アタック' ? '敵キャラクターを攻撃する' :
+                        action === 'リコール' ? 'アイテムショップを利用可能にする' :
+                          action === 'サポート' ? '味方キャラクターを支援する' : ''
+                  }
+                  onClick={() => handleSelectAction(action)}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActionDialogOpen(false)}>キャンセル</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* サポートタイプ選択ダイアログ */}
+      <Dialog
+        open={supportDialogOpen}
+        onClose={() => setSupportDialogOpen(false)}
+      >
+        <DialogTitle>
+          サポートタイプを選択
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            <ListItem sx={{ cursor: 'pointer' }}>
+              <ListItemText
+                primary="エンチャント"
+                secondary="味方キャラクターにバフを付与する"
+                onClick={() => handleSelectSupportType('エンチャント')}
+              />
+            </ListItem>
+            <ListItem sx={{ cursor: 'pointer' }}>
+              <ListItemText
+                primary="フック"
+                secondary="敵キャラクターにデバフを付与する"
+                onClick={() => handleSelectSupportType('フック')}
+              />
+            </ListItem>
+            <ListItem sx={{ cursor: 'pointer' }}>
+              <ListItemText
+                primary="タンク"
+                secondary="味方キャラクターへの攻撃を肩代わりする"
+                onClick={() => handleSelectSupportType('タンク')}
+              />
+            </ListItem>
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSupportDialogOpen(false)}>キャンセル</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* ターゲット選択ダイアログ */}
       <Dialog
         open={targetDialogOpen}
         onClose={() => setTargetDialogOpen(false)}
       >
-        <DialogTitle>対象を選択</DialogTitle>
+        <DialogTitle>
+          対象を選択 - {
+            selectedAction === 'アタック' ? '攻撃' :
+              selectedAction === 'サポート' && selectedSupportType === 'エンチャント' ? 'バフ付与' :
+                selectedAction === 'サポート' && selectedSupportType === 'フック' ? 'デバフ付与' :
+                  selectedAction === 'サポート' && selectedSupportType === 'タンク' ? 'タンク' : ''
+          }
+        </DialogTitle>
         <DialogContent>
           <List>
-            {possibleTargets.map(target => (
-              <ListItem key={target.id}>
-                <ListItemButton onClick={() => handleSelectTarget(target.id)}>
+            {getPossibleTargets().length > 0 ? (
+              getPossibleTargets().map(target => (
+                <ListItem
+                  key={target.id}
+                  sx={{ cursor: 'pointer' }}
+                >
                   <ListItemText
                     primary={target.name}
-                    secondary={`${target.class} (${target.role}) - HP: ${target.hp}/${target.maxHp}`}
+                    secondary={`${target.role} (HP: ${target.hp}/${target.maxHp})`}
+                    onClick={() => handleSelectTarget(target.id)}
                   />
-                </ListItemButton>
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText
+                  primary="選択可能な対象がありません"
+                  secondary="選択できる対象がいません。別のアクションを選択してください。"
+                />
               </ListItem>
-            ))}
+            )}
           </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setTargetDialogOpen(false)}>キャンセル</Button>
         </DialogActions>
       </Dialog>
-      
-      {/* 結果表示ダイアログ */}
-      <Dialog
-        open={resultDialogOpen}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Typography variant="h6">ターン結果</Typography>
-        </DialogTitle>
-        <DialogContent dividers>
-          <List>
-            {turnResults.map((result, index) => {
-              const character = [...blueTeamCharacters, ...redTeamCharacters].find(
-                c => c.id === result.characterId
-              );
-              
-              const target = result.targetId
-                ? [...blueTeamCharacters, ...redTeamCharacters].find(
-                    c => c.id === result.targetId
-                  )
-                : null;
-              
-              if (!character) return null;
-              
-              return (
-                <Box key={index} sx={{ mb: 2 }}>
-                  <Paper sx={{ p: 2, bgcolor: character.team === 'BLUE' ? 'rgba(33, 150, 243, 0.05)' : 'rgba(244, 67, 54, 0.05)' }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      {character.name} ({character.role}) の「{result.action}」
-                      {result.supportType ? `（${result.supportType}）` : ''}
-                      {target ? ` → ${target.name}` : ''}
-                    </Typography>
-                    
-                    <Box sx={{ mt: 1 }}>
-                    {result.rolls.map((roll, i) => (
-                      <Typography key={i} variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                        <Box component="span" sx={{ 
-                          width: 60, 
-                          display: 'inline-block',
-                          color: roll.type === 'attack' ? 'error.main' : roll.type === 'avoid' ? 'info.main' : 'success.main',
-                          fontWeight: 'bold'
-                        }}>
-                          {roll.type === 'attack' ? '攻撃' : roll.type === 'avoid' ? '回避' : 'スキル'}:
-                        </Box>
-                        <Box component="span" sx={{ mr: 1 }}>
-                          {roll.dice}
-                        </Box>
-                        <Box component="span" sx={{ 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          bgcolor: 'grey.100', 
-                          px: 1, 
-                          py: 0.5, 
-                          borderRadius: 1,
-                          mr: 1
-                        }}>
-                          [{roll.values.join(', ')}]
-                        </Box>
-                        = <Box component="span" fontWeight="bold" sx={{ ml: 1 }}>{roll.total}</Box>
-                        {roll.skillModifier ? (
-                          <Box component="span" sx={{ 
-                            ml: 1, 
-                            color: roll.skillModifier < 0 ? 'error.main' : 'success.main',
-                            fontWeight: 'bold' 
-                          }}>
-                            ({roll.skillModifier > 0 ? '+' : ''}{roll.skillModifier})
-                          </Box>
-                        ) : null}
-                      </Typography>
-                    ))}
-                      
-                      <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {result.success && result.damage && (
-                          <Typography variant="body2" sx={{ bgcolor: 'error.light', color: 'error.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            ダメージ: {result.damage}
-                          </Typography>
-                        )}
-                        
-                        {result.fpGained && (
-                          <Typography variant="body2" sx={{ bgcolor: 'success.light', color: 'success.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            FP獲得: +{result.fpGained}
-                          </Typography>
-                        )}
-                        
-                        {/* サポート効果の表示 */}
-                        {result.buffAdded && (
-                          <Typography variant="body2" sx={{ bgcolor: 'success.light', color: 'success.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            バフ付与: +{result.buffAdded}
-                          </Typography>
-                        )}
-                        
-                        {result.debuffAdded && (
-                          <Typography variant="body2" sx={{ bgcolor: 'error.light', color: 'error.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            デバフ付与: -{result.debuffAdded}
-                          </Typography>
-                        )}
-                        
-                        {result.tankEffect && (
-                          <Typography variant="body2" sx={{ bgcolor: 'info.light', color: 'info.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            攻撃肩代わり効果
-                          </Typography>
-                        )}
-                        
-                        {/* タワーダメージの表示 */}
-                        {result.towerDamage && (
-                          <Typography variant="body2" sx={{ bgcolor: 'warning.light', color: 'warning.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            タワーダメージ: {result.towerDamage}
-                          </Typography>
-                        )}
-                        
-                        {result.forceRecall && (
-                          <Typography variant="body2" sx={{ bgcolor: 'info.light', color: 'info.contrastText', px: 1, py: 0.5, borderRadius: 1 }}>
-                            次のラウンドで強制リコール
-                          </Typography>
-                        )}
 
-                        {result.killedTarget && (
-                              <Typography variant="body2" sx={{ 
-                                bgcolor: 'purple.light', 
-                                color: 'purple.contrastText', 
-                                px: 1, 
-                                py: 0.5, 
-                                borderRadius: 1,
-                                fontWeight: 'bold'
-                              }}>
-                                キル！ (+8 FP)
-                              </Typography>
-                            )}
-                      </Box>
-                    </Box>
-                  </Paper>
-                </Box>
-              );
-            })}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleNextRound} variant="contained" color="primary">
-            次のラウンドへ
-          </Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* エラーメッセージ */}
+      {/* エラー表示 */}
       <Snackbar
         open={showError}
         autoHideDuration={6000}
         onClose={() => setShowError(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          onClose={() => setShowError(false)}
-          severity="error"
-          sx={{ width: '100%' }}
-        >
+        <Alert severity="error" onClose={() => setShowError(false)}>
           {errorMessage}
         </Alert>
       </Snackbar>

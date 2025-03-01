@@ -95,19 +95,19 @@ export const SKILL_DESCRIPTIONS: Record<SkillType, string> = {
 };
 
 // アクションタイプ
-export type ActionType = 'ファーム' | 'アタック' | 'リコール' | 'サイドプッシュ' | 'スキル';
+export type ActionType = 'ファーム' | 'アタック' | 'リコール' | 'サイドプッシュ' | 'スキル' | 'サポート';
 
 // ゲームフェーズ
-export type GamePhase = 'CHARACTER_CREATION' | 'TEAM_FORMATION' | 'LANE_BATTLE' | 'TEAM_BATTLE' | 'END';
+export type GamePhase = 'CHARACTER_CREATION' | 'TEAM_FORMATION' | 'LANE_BATTLE' | 'TEAM_BATTLE' | 'OBJECT_FIGHT' | 'RESULT' | 'END';
 
 // プレイヤーアクション
 export interface PlayerAction {
   characterId: string;
   actionType: ActionType;
-  targetId?: string; // アタック対象
-  skillId?: string;  // 使用するスキルID
+  targetId?: string;     // アタック対象
+  skillId?: string;      // 使用するスキルID
+  supportType?: SupportActionType; // サポートタイプ
 }
-
 // ゲームの状態
 export interface GameState {
   phase: GamePhase;
@@ -146,6 +146,32 @@ export const createNewSkill = (name: string, type: SkillType): Skill => {
   };
 };
 
+// ダイスロール結果の型定義
+export interface DiceRoll {
+  // 基本プロパティ
+  diceType: string;      // "D6"など、ダイスの種類
+  diceCount: number;     // ダイスの数
+  rolls: number[];       // 各ダイスの結果
+  modifier: number;      // 固定値修正（+2など）
+  total: number;         // 合計値
+  
+  // 追加プロパティ
+  dice?: string;         // "2D6+3"などのダイス表記
+  values?: number[];     // 各ダイスの結果 (legacy support)
+  type?: string;         // 'attack', 'avoid', 'skill' などの用途
+  
+  // モディファイア関連
+  skillModifier?: number | string; // スキルによる修正値または効果説明
+  itemModifier?: number;  // アイテムによる修正値
+  buffModifier?: number;  // バフによる修正値
+  debuffModifier?: number; // デバフによる修正値
+  
+  // その他
+  success?: boolean;      // 判定の成功/失敗
+  description?: string;   // 結果の説明
+}
+
+// 既存の TurnResult の修正例
 export interface TurnResult {
   characterId: string;
   targetId?: string;
@@ -162,6 +188,7 @@ export interface TurnResult {
   forceRecall?: boolean;
   itemPurchased?: string;
   killedTarget?: boolean;
+  itemEffect?: string;    // アイテム効果の説明
 }
 
 export interface Character {
