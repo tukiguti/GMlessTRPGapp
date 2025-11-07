@@ -30,18 +30,38 @@ SUPは行うことができない
 オブジェクトファイトは、集団戦フェーズの4ラウンドに発生する。チームごとに攻撃判定を行い、合計値が大きいチームに+5の判定を3ラウンド付与する。
 
 
-プレイヤーは、AP、AD、JG、SUPの4種類に分かれる
-	AD：マークスマン　ファイター　タンク
-		マークスマン：攻撃 3D6 回避 1D6  HP 3
-		ファイター：攻撃1D6+4 回避 1D6+4 HP 5
-		タンク：攻撃1D6+2 回避 1D6+2 HP 7
-	AP：メイジ　アサシン
-		メイジ：攻撃 2D6 回避 1D6+4 HP 4
-		アサシン：攻撃 2D6+2 回避 2D6+3 HP 1
-	JG：ファーム　ガンク
-		ファーム：攻撃 1D6+4 回避　2D6　HP3
-		ガンク：攻撃　2D6　回避　1D6+3　HP2
-	SUP：サポート　HP1
+プレイヤーは、ロール（役割）とダメージタイプの組み合わせで分かれる
+ロールは6種類：Tank、Fighter、Assassin、Mage、Marksman、Support
+ダメージタイプは2種類：AD（物理）、AP（魔法）
+
+【ADロール（物理ダメージ系）】
+	ADマークスマン：攻撃 3D6 回避 1D6  HP 3
+		例：Jinx、Caitlyn、Ashe
+	ADファイター：攻撃 1D6+4 回避 1D6+4 HP 5
+		例：Darius、Garen、Fiora
+	ADアサシン：攻撃 2D6+2 回避 2D6+3 HP 1
+		例：Zed、Talon、Rengar
+	ADタンク：攻撃 1D6+2 回避 1D6+2 HP 7
+		例：Malphite（AD build）、Sion
+
+【APロール（魔法ダメージ系）】
+	APメイジ：攻撃 2D6 回避 1D6+4 HP 4
+		例：Lux、Syndra、Orianna
+	APアサシン：攻撃 2D6+2 回避 2D6+2 HP 2
+		例：LeBlanc、Katarina、Fizz
+	APファイター：攻撃 1D6+5 回避 1D6+3 HP 5
+		例：Mordekaiser、Rumble、Sylas
+	APタンク：攻撃 1D6+1 回避 1D6+3 HP 7
+		例：Amumu、Maokai、Malphite（AP build）
+
+【サポートロール】
+	APサポート：攻撃 1D6 回避 1D6+2 HP 2
+		例：Lulu、Janna、Soraka
+	タンクサポート：攻撃 1D6+1 回避 1D6+1 HP 4
+		例：Leona、Thresh、Nautilus
+
+注：レーン（TOP、MID、BOT、JG）は配置位置であり、ロールとは独立している
+　　どのロールでもどのレーンでもプレイ可能（例：ADアサシンがMIDレーン、APメイジがSUPレーンなど）
 
 プレイヤーはスキルを所持している。スキルはラウンド開始に宣言するものと、行動の判定の際に宣言するものが存在する。また、発動する際は、スキル名宣言後に、効果について宣言を行う。
 
