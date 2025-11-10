@@ -1,0 +1,511 @@
+# ========================================
+# GMless TRPG Game - Balance Configuration
+# ========================================
+# このファイルはゲームの数値バランスを一元管理するための設定ファイルです。
+# プレイテストしながら、ここの値を調整してゲームバランスを改善できます。
+
+# ========================================
+# 1. キャラクター初期ステータス (レベル1)
+# ========================================
+character_initial_stats:
+  # 基本値は各ロールの初期ステータス補正値
+
+  ad_marksman:
+    hp: 400
+    attack: 2
+    defense: 1
+    mobility: 2
+    utility: 1
+
+  ad_fighter:
+    hp: 600
+    attack: 3
+    defense: 4
+    mobility: 2
+    utility: 2
+
+  ad_assassin:
+    hp: 450
+    attack: 4
+    defense: 1
+    mobility: 5
+    utility: 2
+
+  ad_tank:
+    hp: 650
+    attack: 2
+    defense: 5
+    mobility: 1
+    utility: 3
+
+  ap_mage:
+    hp: 500
+    attack: 5
+    defense: 1
+    mobility: 2
+    utility: 3
+
+  ap_assassin:
+    hp: 450
+    attack: 6
+    defense: 1
+    mobility: 5
+    utility: 2
+
+  ap_fighter:
+    hp: 550
+    attack: 4
+    defense: 3
+    mobility: 2
+    utility: 2
+
+  ap_tank:
+    hp: 650
+    attack: 2
+    defense: 4
+    mobility: 1
+    utility: 4
+
+  ap_support:
+    hp: 450
+    attack: 1
+    defense: 2
+    mobility: 2
+    utility: 6
+
+  tank_support:
+    hp: 550
+    attack: 1
+    defense: 4
+    mobility: 2
+    utility: 5
+
+# ========================================
+# 2. レベルアップシステム
+# ========================================
+leveling_system:
+  max_level: 18
+
+  # レベルアップに必要なターン数（累積）
+  level_up_turns:
+    2: 5    # 1→2: 5ターン
+    3: 11   # 2→3: 11ターン（+6ターン）
+    4: 18   # 3→4: 18ターン（+7ターン）
+    5: 26   # 4→5: 26ターン（+8ターン）
+    6: 35   # 5→6: 35ターン（+9ターン）
+    7: 45   # 6→7: 45ターン（+10ターン）
+    8: 56   # 7→8: 56ターン（+11ターン）
+    9: 68   # 8→9: 68ターン（+12ターン）
+    10: 81  # 9→10: 81ターン（+13ターン）
+    11: 95  # 10→11: 95ターン（+14ターン）
+    12: 110 # 11→12: 110ターン（+15ターン）
+    13: 126 # 12→13: 126ターン（+16ターン）
+    14: 143 # 13→14: 143ターン（+17ターン）
+    15: 161 # 14→15: 161ターン（+18ターン）
+    16: 180 # 15→16: 180ターン（+19ターン）
+    17: 200 # 16→17: 200ターン（+20ターン）
+    18: 221 # 17→18: 221ターン（+21ターン）
+
+  # 各ロールのレベルアップ時成長値（1レベルごと）
+  growth_per_level:
+    ad_marksman:
+      hp: 50
+      attack: 0.6
+      defense: 0.1
+      mobility: 0.1
+      utility: 0.1
+
+    ad_fighter:
+      hp: 80
+      attack: 0.5
+      defense: 0.4
+      mobility: 0.1
+      utility: 0.1
+
+    ad_assassin:
+      hp: 60
+      attack: 0.5
+      defense: 0.1
+      mobility: 0.2
+      utility: 0.1
+
+    ad_tank:
+      hp: 90
+      attack: 0.2
+      defense: 0.5
+      mobility: 0.1
+      utility: 0.2
+
+    ap_mage:
+      hp: 60
+      attack: 0.5
+      defense: 0.1
+      mobility: 0.1
+      utility: 0.2
+
+    ap_assassin:
+      hp: 60
+      attack: 0.6
+      defense: 0.1
+      mobility: 0.2
+      utility: 0.1
+
+    ap_fighter:
+      hp: 70
+      attack: 0.4
+      defense: 0.3
+      mobility: 0.1
+      utility: 0.1
+
+    ap_tank:
+      hp: 90
+      attack: 0.2
+      defense: 0.4
+      mobility: 0.1
+      utility: 0.2
+
+    ap_support:
+      hp: 50
+      attack: 0.1
+      defense: 0.2
+      mobility: 0.1
+      utility: 0.4
+
+    tank_support:
+      hp: 70
+      attack: 0.1
+      defense: 0.3
+      mobility: 0.1
+      utility: 0.3
+
+# ========================================
+# 3. 戦闘システムの基本定数
+# ========================================
+combat_system:
+  # ダメージ計算の倍率
+  damage_multiplier: 10  # (勝者判定値 - 敗者判定値) × この値
+
+  # デスペナルティ
+  death_penalty:
+    respawn_time_base: 1.0      # 基本リスポーン時間（ターン）
+    respawn_time_per_level: 0.2  # レベルごとの追加時間（ターン）
+    gold_loss_percentage: 10     # 所持ゴールドの喪失率（%）
+    exp_bonus_to_killer: 0.5     # キラーへの経験値ボーナス（ターン相当）
+
+  # CC（クラウドコントロール）判定
+  cc:
+    success_threshold: 13  # CC成功の判定値（1d20 + ユーティリティ ≥ この値）
+    escape_threshold: 15   # CC回避の判定値（1d20 + 移動力 ≥ この値）
+    normal_skill_penalty: -3  # CC成功時の通常スキルペナルティ
+    ult_skill_penalty: -6     # CC成功時のULTペナルティ
+
+# ========================================
+# 4. 戦闘時の補正値
+# ========================================
+combat_modifiers:
+  # ガンク関連
+  gank:
+    no_vision_bonus: 3  # 視界なしの時のボーナス
+    mobility_threshold: 6  # 移動力がこの値以上でボーナス
+    # 実際のボーナス: +(移動力 - mobility_threshold)
+
+  # ポジショニング
+  positioning:
+    frontline_penalty: -2  # フロントライン配置のペナルティ
+    backline_vs_assassin_penalty: -2  # バックライン対アサシンのペナルティ
+
+  # 数的有利（複数人戦闘）
+  # 計算式: ⌊(攻撃側人数 - 防御側人数) / 防御側人数⌋
+  numerical_advantage:
+    2v1: 2
+    3v1: 3
+    4v1: 4
+    5v1: 5
+    3v2: 1  # 3人側に+1
+
+# ========================================
+# 5. スキルシステム
+# ========================================
+skill_system:
+  # 通常スキル
+  normal_skills:
+    damage:
+      bonus: 3        # マッチアップ判定ボーナス
+      cooldown: 2     # クールダウン（ターン）
+
+    cc:
+      penalty_to_target: -3  # 対象へのペナルティ
+      cooldown: 2
+      success_threshold: 13  # CC成功判定
+
+    buff:
+      bonus: 2        # 味方へのボーナス
+      duration: 2     # 持続時間（ターン）
+      cooldown: 4     # クールダウン（ターン）
+
+    debuff:
+      penalty: -2     # 敵へのペナルティ
+      duration: 2     # 持続時間（ターン）
+      cooldown: 4     # クールダウン（ターン）
+
+  # ULT（アルティメット）スキル
+  ult_skills:
+    damage:
+      bonus: 6
+      cooldown: 5
+
+    cc:
+      penalty_to_target: -6
+      cooldown: 5
+      success_threshold: 13
+
+    buff:
+      bonus: 4
+      duration: 3
+      cooldown: 8
+
+    debuff:
+      penalty: -4
+      duration: 3
+      cooldown: 8
+
+# ========================================
+# 6. タワーシステム
+# ========================================
+tower_system:
+  # タワーのHP
+  hp:
+    outer_tower: 3000   # アウタータワー
+    inner_tower: 4000   # インナータワー
+    nexus_tower: 5000   # ネクサスタワー
+    nexus: 5500         # ネクサス
+
+  # タワーへのダメージ
+  damage_to_tower:
+    # プレイヤー攻撃: 2d20 + 攻撃力（コードで計算）
+    player_base_dice: "2d20"  # 基本ダイス
+    # ミニオン攻撃
+    minion_base_dice: "1d6"
+    minion_bonus_damage: 5
+
+  # タワー防御（ミニオン対象）
+  tower_defense:
+    damage_per_turn: 1  # ミニオン1体に与えるダメージ/ターン
+
+# ========================================
+# 7. ミニオンシステム
+# ========================================
+minion_system:
+  spawn_frequency: 3   # ミニオンがスポーンする頻度（ターン）
+  minion_hp: 3         # ミニオンのHP
+  last_hit_gold: 30    # ラストヒット時のゴールド
+  last_hit_exp: -0.5   # ラストヒット時の経験値（ターン短縮）
+
+# ========================================
+# 8. ゴールド獲得システム
+# ========================================
+gold_system:
+  # 基本行動
+  farming: 100         # ファーム選択
+  attack_only: 50      # 攻撃選択のみ
+  attack_with_lasthit: 80  # 攻撃+ラストヒット（+30Gは上記minion_system.last_hit_gold）
+
+  # キル・アシスト
+  kill: 300            # 敵キル
+  assist: 150          # 敵アシスト
+
+  # オブジェクト（チーム全員）
+  tower_destroy: 500   # タワー破壊
+  dragon_kill: 300     # ドラゴン撃破
+  baron_kill: 500      # バロン撃破
+  herald_kill: 200     # ヘラルド撃破
+
+# ========================================
+# 9. ジャングルバフ
+# ========================================
+jungle_buffs:
+  red_buff:
+    attack_bonus: 2.0        # 攻撃力ボーナス
+    slow_effect: -2          # 敵の移動力ペナルティ
+    duration: 9              # 持続時間（ターン）
+    gold_reward: 80          # 取得時のゴールド
+    respawn_time: 30         # リスポーン時間（ターン）
+
+  blue_buff:
+    utility_bonus: 2.0       # ユーティリティボーナス
+    cooldown_reduction: 1    # クールダウン短縮（ターン）
+    cooldown_minimum: 1      # クールダウンの最小値（ターン）
+    duration: 9              # 持続時間（ターン）
+    gold_reward: 80          # 取得時のゴールド
+    respawn_time: 30         # リスポーン時間（ターン）
+
+# ========================================
+# 10. オブジェクトシステム
+# ========================================
+objects:
+  # ドラゴン（共通設定）
+  dragon_common:
+    required_turns: 2        # 撃破に必要なターン数
+    gold_reward: 300         # ゴールド報酬（チーム全員）
+    soul_requirement: 4      # ソウル獲得に必要なドラゴン数
+
+  # ドラゴンの種類別効果（永続バフ）
+  dragon_types:
+    infernal:
+      attack_bonus: 1.5      # 攻撃力ボーナス
+
+    mountain:
+      defense_bonus: 1.5     # 防御力ボーナス
+
+    ocean:
+      hp_regen_per_turn: 50  # HP回復/ターン
+
+    cloud:
+      mobility_bonus: 1.0    # 移動力ボーナス
+
+  # バロン
+  baron:
+    required_turns: 3        # 撃破に必要なターン数
+    gold_reward: 500         # ゴールド報酬（チーム全員）
+    spawn_turn: 71           # 出現ターン
+    buff_duration: 18        # バフ持続時間（ターン）
+
+    # バフ効果
+    buff_effects:
+      attack_bonus: 3.0
+      defense_bonus: 2.0
+      mobility_bonus: 1.0
+      tower_damage_bonus_percent: 50  # タワーダメージ増加（%）
+
+  # ヘラルド
+  herald:
+    required_turns: 2        # 撃破に必要なターン数
+    gold_reward: 200         # ゴールド報酬（チーム全員）
+    tower_damage: 1500       # 召喚時のタワーダメージ（固定、防御力無視）
+
+# ========================================
+# 11. アイテムシステム（基本アイテム）
+# ========================================
+basic_items:
+  long_sword:
+    cost: 350
+    attack: 1.0
+
+  dagger:
+    cost: 300
+    attack: 0.5
+    mobility: 1
+
+  amplifying_tome:
+    cost: 400
+    attack: 1.5
+
+  cloth_armor:
+    cost: 300
+    defense: 1.5
+
+  ruby_crystal:
+    cost: 400
+    hp: 150
+
+  boots:
+    cost: 300
+    mobility: 1
+
+# ========================================
+# 12. アイテムシステム（上位アイテム）
+# ========================================
+advanced_items:
+  infinity_edge:
+    cost: 1450
+    attack: 3.5
+    critical_threshold: 18   # ダイスこの値以上でクリティカル
+    critical_multiplier: 1.5  # クリティカル時のダメージ倍率
+
+  black_cleaver:
+    cost: 1600
+    attack: 2.5
+    hp: 200
+    armor_pen: -2            # 防御貫通
+    armor_pen_duration: 3    # 防御貫通持続時間（ターン）
+    armor_reduction_percent: 20  # 防御力減衰（%）
+
+  rabadons_deathcap:
+    cost: 1900
+    attack: 6.0
+    magic_amplification_percent: 20  # 魔力増幅（%）
+
+  zhonyas_hourglass:
+    cost: 1800
+    attack: 3.5
+    defense: 2.0
+    invulnerability_duration: 1  # 無敵時間（ターン）
+    invulnerability_cooldown: 5  # 無敵クールダウン（ターン）
+
+  void_staff:
+    cost: 2100
+    attack: 5.5
+    armor_reduction_percent: 40  # 防御力減衰（%）
+
+  trinity_force:
+    cost: 2050
+    attack: 2.0
+    hp: 200
+    mobility: 2
+    spellblade_bonus: 3      # スキル使用後のボーナス
+
+# ========================================
+# 13. 時間管理システム
+# ========================================
+time_system:
+  turn_duration_seconds: 10  # 1ターン = 何秒
+  max_game_turns: 120        # ゲーム最大制限時間（ターン）
+
+  # ゲームフェーズ
+  phases:
+    early_game:
+      start_turn: 1
+      end_turn: 30
+      level_range: "1-6"
+
+    mid_game:
+      start_turn: 31
+      end_turn: 70
+      level_range: "7-13"
+
+    late_game:
+      start_turn: 71
+      end_turn: 120
+      level_range: "14-18"
+
+# ========================================
+# 14. バランス調整のヒント
+# ========================================
+#
+# 調整の影響範囲:
+#
+# 1. キャラクター成長率の調整
+#    - HP成長を上げる → 試合時間が長くなる
+#    - 攻撃力成長を上げる → 試合時間が短くなる
+#
+# 2. ゴールド獲得量の調整
+#    - ゴールドを増やす → アイテム購入が早まり、パワースパイクが前倒しに
+#    - ゴールドを減らす → 試合時間が長くなり、戦略性が増す
+#
+# 3. タワーHPの調整
+#    - タワーHPを増やす → 防衛有利、試合時間が長くなる
+#    - タワーHPを減らす → 攻撃有利、試合時間が短くなる
+#
+# 4. スキルボーナスの調整
+#    - スキルボーナスを増やす → スキル使用の重要性が高まる
+#    - スキルボーナスを減らす → 基本ステータスの重要性が高まる
+#
+# 5. オブジェクト報酬の調整
+#    - ドラゴン/バロンの報酬を増やす → オブジェクト争奪戦が激化
+#    - 報酬を減らす → レーンでのファームが重要に
+#
+# 6. レベリングスピードの調整
+#    - レベルアップを早める → 早い段階でULTやスキルが使える
+#    - レベルアップを遅くする → 戦略的なファーム配分が重要に
+#
+# ========================================
