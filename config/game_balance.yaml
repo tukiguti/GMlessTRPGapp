@@ -223,6 +223,119 @@ combat_modifiers:
     5v1: 5
     3v2: 1  # 3人側に+1
 
+  # ゲームフェーズによる補正
+  # 各ロールが得意なフェーズでボーナスを得る
+  phase_modifiers:
+    early_game:  # ターン1-30（レベル1-6）
+      ad_assassin: 1.0     # 序盤のバースト力
+      ad_fighter: 1.0      # 序盤の1v1能力
+      ap_assassin: 1.0     # 序盤のロームとキル能力
+      ad_tank: 0.5         # 序盤でもそこそこ
+      ap_tank: 0.5
+      tank_support: 0.5
+      # その他のロールは補正なし（0）
+      ad_marksman: 0
+      ap_mage: 0
+      ap_fighter: 0
+      ap_support: 0
+
+    mid_game:  # ターン31-70（レベル7-13）
+      ad_fighter: 1.0      # 中盤のピーク
+      ap_fighter: 1.0
+      ap_mage: 0.5         # 中盤から強くなる
+      ad_marksman: 0.5     # アイテムが揃い始める
+      ad_assassin: 0.5     # まだ強い
+      ap_assassin: 0.5
+      # その他のロールは補正なし（0）
+      ad_tank: 0
+      ap_tank: 0
+      tank_support: 0
+      ap_support: 0
+
+    late_game:  # ターン71-120（レベル14-18）
+      ad_marksman: 2.0     # 終盤の火力
+      ap_mage: 1.5         # 終盤のバースト
+      ad_tank: 1.0         # 終盤の硬さ
+      ap_tank: 1.0
+      tank_support: 1.0    # 終盤のサポート能力
+      ap_support: 1.0
+      ap_fighter: 0.5      # まだ強い
+      # アサシンは終盤で弱くなる（補正なし）
+      ad_assassin: 0
+      ap_assassin: 0
+      ad_fighter: 0
+
+  # ロール間の相性補正（攻撃側が防御側に対して得るボーナス）
+  # 例: アサシンがマークスマンを攻撃する場合、アサシンは+2のボーナスを得る
+  role_advantage:
+    # アサシンの優位性（柔らかいターゲット）
+    ad_assassin:
+      vs_ad_marksman: 2.0   # 柔らかいターゲット
+      vs_ap_mage: 2.0       # 柔らかいターゲット
+      vs_ap_support: 1.5    # 柔らかいターゲット
+      vs_ad_tank: -1.0      # タンクは苦手
+      vs_ap_tank: -1.0
+      vs_tank_support: -1.0
+
+    ap_assassin:
+      vs_ad_marksman: 2.0
+      vs_ap_mage: 2.0
+      vs_ap_support: 1.5
+      vs_ad_tank: -1.0
+      vs_ap_tank: -1.0
+      vs_tank_support: -1.0
+
+    # タンクの優位性（アサシン対策、前線維持）
+    ad_tank:
+      vs_ad_assassin: 1.5   # アサシン対策
+      vs_ap_assassin: 1.5
+      vs_ad_marksman: -1.0  # DPS火力に弱い
+      vs_ap_mage: -0.5      # 継続火力に弱い
+
+    ap_tank:
+      vs_ad_assassin: 1.5
+      vs_ap_assassin: 1.5
+      vs_ad_marksman: -1.0
+      vs_ap_mage: -0.5
+
+    tank_support:
+      vs_ad_assassin: 1.5
+      vs_ap_assassin: 1.5
+      vs_ad_marksman: -1.0
+
+    # マークスマンの優位性（DPS火力でタンクを削る）
+    ad_marksman:
+      vs_ad_tank: 1.0       # DPS火力でタンクを削る
+      vs_ap_tank: 1.0
+      vs_tank_support: 1.0
+      vs_ad_fighter: -1.0   # ファイターに弱い
+      vs_ap_fighter: -1.0
+
+    # ファイターの優位性（接近戦で有利）
+    ad_fighter:
+      vs_ad_marksman: 1.0   # 接近戦で有利
+      vs_ap_mage: 0.5
+      vs_ad_tank: -0.5      # タンクには苦戦
+      vs_ap_tank: -0.5
+
+    ap_fighter:
+      vs_ad_marksman: 1.0
+      vs_ap_mage: 0.5
+      vs_ad_tank: -0.5
+      vs_ap_tank: -0.5
+
+    # メイジの優位性（距離を保てれば有利）
+    ap_mage:
+      vs_ad_fighter: 0.5    # 距離を保てれば有利
+      vs_ap_fighter: 0.5
+      vs_ad_tank: 0.5       # 魔法ダメージで削る
+
+    # サポートの優位性
+    ap_support:
+      # サポートは基本的に相性補正なし（味方強化が主な役割）
+      vs_ad_assassin: -1.0  # アサシンに弱い
+      vs_ap_assassin: -1.0
+
 # ========================================
 # 5. スキルシステム
 # ========================================
