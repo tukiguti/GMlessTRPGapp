@@ -117,7 +117,7 @@ leveling_system:
 
     ad_fighter:
       hp: 80
-      attack: 0.5
+      attack: 0.3
       defense: 0.4
       mobility: 0.1
       utility: 0.1
@@ -145,10 +145,10 @@ leveling_system:
 
     ap_assassin:
       hp: 60
-      attack: 0.6
+      attack: 0.5
       defense: 0.1
       mobility: 0.2
-      utility: 0.1
+      utility: 0.2
 
     ap_fighter:
       hp: 70
@@ -165,7 +165,7 @@ leveling_system:
       utility: 0.2
 
     ap_support:
-      hp: 50
+      hp: 60
       attack: 0.1
       defense: 0.2
       mobility: 0.1
