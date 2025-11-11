@@ -6,6 +6,9 @@
 3. [オブジェクトバフ](#オブジェクトバフ)
 4. [バフの管理](#バフの管理)
 5. [バフの戦略的使用](#バフの戦略的使用)
+6. [バフ/デバフの技術的管理](#バフデバフの技術的管理)
+7. [スキルクールダウン管理](#スキルクールダウン管理)
+8. [ステータス計算システム](#ステータス計算システム)
 
 ---
 
@@ -408,7 +411,276 @@
 
 ---
 
+## バフ/デバフの技術的管理
+
+### バフ/デバフ配列管理
+
+各プレイヤーは、バフ/デバフを配列で管理します。各要素は以下の構造を持ちます：
+
+```javascript
+{
+  type: string,       // バフ/デバフの種類（例: "red_buff", "skill_damage_buff", "cc_debuff"）
+  duration: number,   // 残りターン数（例: 3）
+  value: number       // 効果値（例: +2.0攻撃力、-3ペナルティ）
+}
+```
+
+#### 例: バフ/デバフ配列
+
+```javascript
+player.buffs = [
+  { type: "red_buff", duration: 5, value: 2.0 },           // 赤バフ: 攻撃力+2.0、残り5ターン
+  { type: "skill_damage_buff", duration: 2, value: 3.0 },  // スキルバフ: 攻撃力+3.0、残り2ターン
+  { type: "dragon_infernal", duration: -1, value: 1.5 }    // インフェルナルドラゴン: 攻撃力+1.5、永続（-1）
+];
+
+player.debuffs = [
+  { type: "cc_debuff", duration: 1, value: -3.0 },         // CCデバフ: -3ペナルティ、残り1ターン
+  { type: "slow_debuff", duration: 1, value: -2.0 }        // スローデバフ: 移動力-2、残り1ターン
+];
+```
+
+### ターン開始時のクリーンアップ処理
+
+各ターン開始時に、以下の処理を実行します：
+
+#### クリーンアップ手順
+
+1. **バフ/デバフの持続時間減少**
+   ```javascript
+   for (let buff of player.buffs) {
+     if (buff.duration > 0) {
+       buff.duration -= 1;
+     }
+   }
+   ```
+
+2. **期限切れバフ/デバフの削除**
+   ```javascript
+   player.buffs = player.buffs.filter(buff => buff.duration !== 0);
+   player.debuffs = player.debuffs.filter(debuff => debuff.duration !== 0);
+   ```
+
+3. **永続バフの保持**
+   - `duration === -1`のバフは永続として保持される
+   - 例: ドラゴンバフ、エルダードラゴンバフ
+
+#### クリーンアップ処理の例
+
+**ターン開始前**:
+```javascript
+player.buffs = [
+  { type: "red_buff", duration: 1, value: 2.0 },
+  { type: "skill_damage_buff", duration: 2, value: 3.0 }
+];
+```
+
+**ターン開始時のクリーンアップ後**:
+```javascript
+// 持続時間を減少
+player.buffs = [
+  { type: "red_buff", duration: 0, value: 2.0 },           // 期限切れ
+  { type: "skill_damage_buff", duration: 1, value: 3.0 }
+];
+
+// 期限切れを削除
+player.buffs = [
+  { type: "skill_damage_buff", duration: 1, value: 3.0 }
+];
+```
+
+---
+
+## スキルクールダウン管理
+
+### スキルクールダウン構造
+
+各スキルは以下の構造で管理します：
+
+```javascript
+{
+  lastUsedTurn: number,        // 最後に使用したターン番号（例: 10）
+  duration: number,            // クールダウン時間（例: 2ターン）
+  cooldownRemaining: number    // 残りクールダウンターン数（例: 1）
+}
+```
+
+#### 例: スキル管理
+
+```javascript
+player.skills = {
+  normalSkill: {
+    lastUsedTurn: 10,          // ターン10で使用
+    duration: 2,               // 2ターンのクールダウン
+    cooldownRemaining: 0       // 現在使用可能
+  },
+  ultSkill: {
+    lastUsedTurn: 8,           // ターン8で使用
+    duration: 5,               // 5ターンのクールダウン
+    cooldownRemaining: 1       // あと1ターンで使用可能
+  }
+};
+```
+
+### クールダウン更新処理
+
+#### ターン開始時の処理
+
+1. **クールダウン減少**
+   ```javascript
+   for (let skill of Object.values(player.skills)) {
+     if (skill.cooldownRemaining > 0) {
+       skill.cooldownRemaining -= 1;
+     }
+   }
+   ```
+
+2. **使用可能判定**
+   ```javascript
+   function canUseSkill(skill) {
+     return skill.cooldownRemaining === 0;
+   }
+   ```
+
+#### スキル使用時の処理
+
+```javascript
+function useSkill(player, skillName, currentTurn) {
+  let skill = player.skills[skillName];
+
+  if (canUseSkill(skill)) {
+    // スキル効果を適用
+    applySkillEffect(player, skillName);
+
+    // クールダウンをリセット
+    skill.lastUsedTurn = currentTurn;
+    skill.cooldownRemaining = skill.duration;
+
+    // 青バフ効果: クールダウン-1
+    if (hasBlueBuffEffect(player)) {
+      skill.cooldownRemaining = Math.max(1, skill.cooldownRemaining - 1);
+    }
+  } else {
+    throw new Error("スキルはクールダウン中です");
+  }
+}
+```
+
+---
+
+## ステータス計算システム
+
+### ステータス計算の順序
+
+ステータスは以下の順序で計算されます：
+
+1. **基礎ステータス**: キャラクターの基本ステータス（レベルによる成長含む）
+2. **アイテムの基礎効果**: アイテムによる基礎ステータス上昇
+3. **パッシブ効果**: アイテムのパッシブ効果
+4. **バフ効果**: 一時的なバフによる上昇
+5. **デバフ効果**: 一時的なデバフによる減少
+
+### calculateFinalStats関数
+
+```javascript
+function calculateFinalStats(player) {
+  let stats = {
+    hp: 0,
+    attack: 0,
+    defense: 0,
+    mobility: 0,
+    utility: 0
+  };
+
+  // 1. 基礎ステータス
+  stats.hp = player.baseStats.hp + (player.level * player.growthRates.hp);
+  stats.attack = player.baseStats.attack + (player.level * player.growthRates.attack);
+  stats.defense = player.baseStats.defense + (player.level * player.growthRates.defense);
+  stats.mobility = player.baseStats.mobility + (player.level * player.growthRates.mobility);
+  stats.utility = player.baseStats.utility + (player.level * player.growthRates.utility);
+
+  // 2. アイテムの基礎効果
+  for (let item of player.items) {
+    stats.attack += item.baseAttack || 0;
+    stats.defense += item.baseDefense || 0;
+    stats.mobility += item.baseMobility || 0;
+    stats.utility += item.baseUtility || 0;
+  }
+
+  // 3. パッシブ効果
+  for (let item of player.items) {
+    if (item.passive) {
+      applyPassiveEffect(stats, item.passive);
+    }
+  }
+
+  // 4. バフ効果
+  for (let buff of player.buffs) {
+    if (buff.type.includes("attack")) {
+      stats.attack += buff.value;
+    } else if (buff.type.includes("defense")) {
+      stats.defense += buff.value;
+    } else if (buff.type.includes("mobility")) {
+      stats.mobility += buff.value;
+    } else if (buff.type.includes("utility")) {
+      stats.utility += buff.value;
+    }
+  }
+
+  // 5. デバフ効果
+  for (let debuff of player.debuffs) {
+    if (debuff.type.includes("attack")) {
+      stats.attack += debuff.value; // debuff.valueは負の値
+    } else if (debuff.type.includes("defense")) {
+      stats.defense += debuff.value;
+    } else if (debuff.type.includes("mobility")) {
+      stats.mobility += debuff.value;
+    } else if (debuff.type.includes("utility")) {
+      stats.utility += debuff.value;
+    }
+  }
+
+  return stats;
+}
+```
+
+### 使用例
+
+```javascript
+let player = {
+  level: 6,
+  baseStats: { hp: 600, attack: 5.0, defense: 4.0, mobility: 5, utility: 4 },
+  growthRates: { hp: 50, attack: 0.5, defense: 0.3, mobility: 0, utility: 0.2 },
+  items: [
+    { name: "Long Sword", baseAttack: 1.5 },
+    { name: "Cloth Armor", baseDefense: 1.0 }
+  ],
+  buffs: [
+    { type: "red_buff", duration: 5, value: 2.0 },
+    { type: "skill_damage_buff", duration: 2, value: 3.0 }
+  ],
+  debuffs: []
+};
+
+let finalStats = calculateFinalStats(player);
+console.log(finalStats);
+// {
+//   hp: 900,
+//   attack: 5.0 + 3.0 + 1.5 + 2.0 + 3.0 = 14.5,
+//   defense: 4.0 + 1.8 + 1.0 = 6.8,
+//   mobility: 5,
+//   utility: 4 + 1.2 = 5.2
+// }
+```
+
+---
+
 ## 変更履歴
+- 2025-11-11: 技術的管理セクションを追加
+  - バフ/デバフ配列管理システムを実装
+  - ターン開始時のクリーンアップ処理を定義
+  - スキルクールダウン管理システムを実装
+  - calculateFinalStats関数によるステータス計算順序を定義
 - 2025-11-09: 初版作成
   - ジャングルバフ（赤バフ、青バフ）の詳細効果を定義
   - オブジェクトバフ（ドラゴン、バロン、ヘラルド）の詳細効果を定義
