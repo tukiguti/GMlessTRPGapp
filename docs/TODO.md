@@ -448,8 +448,237 @@
 
 ---
 
+## 実装タスク（システム設計完成後）
+
+### ✅ 13. ゲームロジック実装（フェーズ2）
+
+**ステータス**: 完了（2025-11-13）
+
+**理由**:
+- システム設計が完了し、ゲームロジックの実装が必要
+- ゲームエンジン、キャラクターシステム、戦闘システムの実装
+
+**作成内容**:
+- [x] ConfigLoader実装（game_balance.yamlの読み込み）
+- [x] GameEngine実装（ゲーム状態管理）
+- [x] Characterシステム（キャラクター作成、レベルアップ）
+- [x] Combatシステム（マッチアップ判定、ダメージ計算）
+- [x] RoundManager実装（ラウンド進行フロー）
+
+**成果物**:
+- `src/game/config/ConfigLoader.ts`
+- `src/game/config/types.ts`
+- `src/game/systems/Character.ts`
+- `src/game/systems/Combat.ts`
+- `src/game/engine/GameEngine.ts`
+- `src/game/engine/RoundManager.ts`
+
+**関連ドキュメント**:
+- `system/architecture.md` - ゲームロジックのアーキテクチャ
+- `system_todo.md` - 実装手順（フェーズ2）
+
+---
+
+### ✅ 14. フロントエンド基盤構築（フェーズ3）
+
+**ステータス**: 完了（2025-11-13）
+
+**理由**:
+- ゲームロジックが完成し、UIの実装が必要
+- React + Vite + Tailwind CSSの環境構築
+
+**作成内容**:
+- [x] Viteプロジェクトの初期化
+- [x] Tailwind CSSの設定
+- [x] WebSocketサービスの実装
+- [x] Zustand状態管理の実装
+- [x] 基本UIコンポーネント（GameBoard、CharacterCard、TowerStatus）
+
+**成果物**:
+- `src/client/` - クライアントプロジェクト全体
+- `src/client/src/services/websocket.ts`
+- `src/client/src/stores/gameStore.ts`
+- `src/client/src/components/GameBoard.tsx`
+- `src/client/src/components/CharacterCard.tsx`
+- `src/client/src/components/TowerStatus.tsx`
+
+**関連ドキュメント**:
+- `system/technology_stack.md` - フロントエンド技術スタック
+- `system_todo.md` - 実装手順（フェーズ3）
+
+---
+
+### ✅ 15. UI設計とビジュアルマップの実装
+
+**ステータス**: 完了（2025-11-13）
+
+**理由**:
+- LoL風のビジュアルマップが必要
+- 行動選択、戦闘ログなどのゲームUIが必要
+- デザインシステムの統一が必要
+
+**作成内容**:
+- [x] UI設計ドキュメントの作成
+  - 全体レイアウト設計
+  - マップビュー詳細設計
+  - 行動選択パネル設計
+  - アイテムショップ設計
+  - デザインシステム定義
+- [x] MapView実装（LoL風SVGマップ）
+  - 対角線配置（ブルー左下、レッド右上）
+  - クリック可能なエリア
+  - キャラクター位置表示
+  - タワー・オブジェクト表示
+- [x] ActionPanel実装（行動選択パネル）
+  - 5つの行動ボタン（攻撃、ファーム、移動、スキル、リコール）
+  - ターゲット選択
+  - 残り時間表示
+- [x] CombatLog実装（戦闘ログ）
+  - イベントタイプ別色分け
+  - 自動スクロール
+  - フィルター機能
+
+**成果物**:
+- `docs/ui_design.md` - UI設計ドキュメント
+- `src/client/src/components/MapView.tsx`
+- `src/client/src/components/ActionPanel.tsx`
+- `src/client/src/components/CombatLog.tsx`
+
+**関連ドキュメント**:
+- `docs/ui_design.md` - UI設計詳細
+- `game_overview.md` - マップ構造、エリア定義
+
+---
+
+### 🔄 16. バックエンドサーバーの実装
+
+**ステータス**: 未着手
+
+**理由**:
+- フロントエンドとゲームロジックが完成
+- サーバーとWebSocket通信の実装が必要
+
+**作成内容**:
+- [ ] Expressサーバーの初期化
+- [ ] Socket.ioの設定
+- [ ] Prismaスキーマの作成
+- [ ] データベースマイグレーション
+- [ ] WebSocket接続ハンドラーの実装
+- [ ] GameEngineとの統合
+
+**成果物**:
+- `src/server/src/index.ts`
+- `src/server/src/websocket/connection.ts`
+- `src/database/prisma/schema.prisma`
+
+**関連ドキュメント**:
+- `system/architecture.md` - サーバーアーキテクチャ
+- `system_todo.md` - 実装手順（フェーズ1、フェーズ4）
+
+---
+
+### ⏳ 17. アイテムショップUIの実装
+
+**ステータス**: 未着手
+
+**理由**:
+- アイテムシステムのゲームルールは完成
+- ショップUIの実装が必要
+
+**作成内容**:
+- [ ] ItemShopコンポーネントの実装
+- [ ] アイテムリスト表示
+- [ ] フィルター・ソート機能
+- [ ] アイテム詳細表示
+- [ ] 合成レシピ表示
+- [ ] 購入機能
+
+**成果物**:
+- `src/client/src/components/ItemShop.tsx`
+
+**関連ドキュメント**:
+- `docs/item_system.md` - アイテムシステムルール
+- `docs/ui_design.md` - アイテムショップUI設計
+
+---
+
+### ⏳ 18. ゲーム前画面の実装
+
+**ステータス**: 未着手
+
+**理由**:
+- ゲーム開始前のUI（メニュー、ロビー、キャラ選択）が必要
+
+**作成内容**:
+- [ ] MainMenuコンポーネント
+- [ ] Lobbyコンポーネント（ルーム作成・参加）
+- [ ] CharacterSelectionコンポーネント
+- [ ] ロール・レーン選択UI
+- [ ] プレイモード選択
+
+**成果物**:
+- `src/client/src/components/MainMenu.tsx`
+- `src/client/src/components/Lobby.tsx`
+- `src/client/src/components/CharacterSelection.tsx`
+
+**関連ドキュメント**:
+- `docs/play_modes.md` - プレイモード詳細
+- `docs/ui_design.md` - ゲーム前画面UI設計
+
+---
+
+### ⏳ 19. ゲーム機能の統合
+
+**ステータス**: 未着手
+
+**理由**:
+- すべてのコンポーネントを統合してゲームとして動作させる必要
+
+**作成内容**:
+- [ ] クライアント・サーバー接続テスト
+- [ ] ラウンド進行の実装
+- [ ] リアルタイム状態同期
+- [ ] スキルシステムの実装
+- [ ] ミニオン・タワーシステムの実装
+- [ ] オブジェクトシステムの実装
+
+**成果物**:
+- 統合されたゲームアプリケーション
+
+**関連ドキュメント**:
+- すべてのゲームルールドキュメント
+- `system_todo.md` - 実装手順（フェーズ5〜6）
+
+---
+
+### ⏳ 20. テストとデプロイ
+
+**ステータス**: 未着手
+
+**理由**:
+- ゲームの品質保証とデプロイが必要
+
+**作成内容**:
+- [ ] ユニットテスト
+- [ ] 統合テスト
+- [ ] E2Eテスト
+- [ ] Docker化
+- [ ] GCPデプロイ
+
+**成果物**:
+- テストスイート
+- Dockerイメージ
+- デプロイされたアプリケーション
+
+**関連ドキュメント**:
+- `system/gcp_optimized_design.md` - GCPデプロイ設計
+- `system_todo.md` - 実装手順（フェーズ7）
+
+---
+
 ## 優先順位
 
+### ゲームルール＆システム設計（完了）
 1. ✅ **完了**: アイテムシステム
 2. ✅ **完了**: リコールシステム、時間管理システム、バフ効果
 3. ✅ **完了**: ゲームルール全体の整合性確認
@@ -459,7 +688,16 @@
 7. ✅ **完了**: ポジショニングルールの調整
 8. ✅ **完了**: プレイモードシステムとプレイヤー管理
 9. ✅ **完了**: システム設計（アーキテクチャ、技術スタック、ホスティング設計）
-10. **次のステップ**: 実装フェーズ（system_todo.mdを参照）
+
+### 実装フェーズ（進行中）
+10. ✅ **完了**: ゲームロジック実装（ConfigLoader、GameEngine、Combat等）
+11. ✅ **完了**: フロントエンド基盤構築（React、Vite、Zustand等）
+12. ✅ **完了**: UI設計とビジュアルマップ（MapView、ActionPanel、CombatLog）
+13. 🔄 **次**: バックエンドサーバーの実装
+14. ⏳ **未着手**: アイテムショップUIの実装
+15. ⏳ **未着手**: ゲーム前画面の実装
+16. ⏳ **未着手**: ゲーム機能の統合
+17. ⏳ **未着手**: テストとデプロイ
 
 ---
 
