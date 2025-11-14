@@ -27,27 +27,47 @@ const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
   console.warn('Warning: DATABASE_URL is not set');
+} else if (!databaseUrl.startsWith('postgresql://') && !databaseUrl.startsWith('postgres://')) {
+  console.warn('Warning: DATABASE_URL has invalid format. Expected postgresql:// or postgres:// protocol');
 }
 
-export const pool = new Pool({
-  connectionString: databaseUrl,
-  max: parseInt(process.env.MAX_CONNECTIONS || '70', 10), // 最大接続数
-  idleTimeoutMillis: 30000, // アイドルタイムアウト
-  connectionTimeoutMillis: 5000, // 接続タイムアウト
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
-});
+// DATABASE_URLが有効な場合のみプールを作成
+let poolInstance: Pool | null = null;
 
-// 接続エラーハンドリング
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
-});
+if (databaseUrl && databaseUrl.trim() !== '' && (databaseUrl.startsWith('postgresql://') || databaseUrl.startsWith('postgres://'))) {
+  try {
+    poolInstance = new Pool({
+      connectionString: databaseUrl,
+      max: parseInt(process.env.MAX_CONNECTIONS || '70', 10), // 最大接続数
+      idleTimeoutMillis: 30000, // アイドルタイムアウト
+      connectionTimeoutMillis: 5000, // 接続タイムアウト
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+    });
+
+    // 接続エラーハンドリング
+    poolInstance.on('error', (err) => {
+      console.error('Unexpected error on idle client', err);
+      process.exit(-1);
+    });
+
+    console.log('✓ Database connection pool initialized');
+  } catch (error) {
+    console.error('Error initializing database pool:', error);
+    poolInstance = null;
+  }
+}
+
+export const pool = poolInstance as Pool;
 
 /**
  * データベース接続をテスト
  */
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
+    if (!pool) {
+      console.error('✗ Database pool is not initialized. Check DATABASE_URL format.');
+      return false;
+    }
     const client = await pool.connect();
     const result = await client.query('SELECT NOW()');
     console.log('✓ Database connected successfully at:', result.rows[0].now);
@@ -63,8 +83,10 @@ export async function testDatabaseConnection(): Promise<boolean> {
  * データベース接続を安全にクローズ
  */
 export async function closeDatabaseConnection(): Promise<void> {
-  await pool.end();
-  console.log('Database connection pool closed');
+  if (pool) {
+    await pool.end();
+    console.log('Database connection pool closed');
+  }
 }
 
 // プロセス終了時のクリーンアップ
