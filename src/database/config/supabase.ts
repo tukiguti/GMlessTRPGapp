@@ -40,8 +40,8 @@ if (databaseUrl && databaseUrl.trim() !== '' && (databaseUrl.startsWith('postgre
       connectionString: databaseUrl,
       max: parseInt(process.env.MAX_CONNECTIONS || '70', 10), // 最大接続数
       idleTimeoutMillis: 30000, // アイドルタイムアウト
-      connectionTimeoutMillis: 5000, // 接続タイムアウト
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+      connectionTimeoutMillis: 10000, // 接続タイムアウトを10秒に延長
+      ssl: { rejectUnauthorized: false }, // Supabaseでは常にSSL必須
     });
 
     // 接続エラーハンドリング
@@ -64,17 +64,40 @@ export const pool = poolInstance as Pool;
  */
 export async function testDatabaseConnection(): Promise<boolean> {
   try {
+    console.log('🔍 デバッグ情報:');
+    console.log('  - DATABASE_URL exists:', !!databaseUrl);
+    console.log('  - Pool initialized:', !!pool);
+
     if (!pool) {
       console.error('✗ Database pool is not initialized. Check DATABASE_URL format.');
       return false;
     }
+
+    console.log('  - Attempting to connect to database...');
     const client = await pool.connect();
-    const result = await client.query('SELECT NOW()');
-    console.log('✓ Database connected successfully at:', result.rows[0].now);
+    console.log('  - Client connected, executing query...');
+
+    const result = await client.query('SELECT NOW(), version()');
+    console.log('✓ Database connected successfully!');
+    console.log('  - Server time:', result.rows[0].now);
+    console.log('  - PostgreSQL version:', result.rows[0].version.split('\n')[0]);
+
     client.release();
     return true;
   } catch (error) {
-    console.error('✗ Database connection failed:', error);
+    console.error('✗ Database connection failed:');
+    if (error instanceof Error) {
+      console.error('  - Error name:', error.name);
+      console.error('  - Error message:', error.message);
+      if ('code' in error) {
+        console.error('  - Error code:', (error as any).code);
+      }
+      if ('errno' in error) {
+        console.error('  - Error number:', (error as any).errno);
+      }
+    } else {
+      console.error('  - Error:', error);
+    }
     return false;
   }
 }
