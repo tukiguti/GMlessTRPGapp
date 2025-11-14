@@ -1,0 +1,65 @@
+// GMレスLoL風TRPG - Prisma Schema
+// Supabase PostgreSQL用のスキーマ定義
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ゲームモデル
+model Game {
+  id        String   @id @default(uuid())
+  mode      String   // "casual", "ranked_1v1", "ranked_5v5", "tutorial"
+  round     Int      @default(0)
+  phase     String   @default("declaration") // "declaration", "resolution"
+  state     Json     // ゲーム状態全体（差分更新で最小化）
+  status    String   @default("waiting") // "waiting", "in_progress", "finished"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  players   Player[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// プレイヤーモデル
+model Player {
+  id          String      @id @default(uuid())
+  gameId      String
+  socketId    String?
+  playerName  String
+  team        String      // "blue", "red"
+
+  game        Game        @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  characters  Character[]
+
+  @@index([gameId])
+  @@index([socketId])
+}
+
+// キャラクターモデル
+model Character {
+  id          String @id @default(uuid())
+  playerId    String
+  name        String
+  role        String // "ad_marksman", "ad_fighter", etc.
+  lane        String // "TOP", "JG", "MID", "BOT", "SUP"
+  level       Int    @default(1)
+  hp          Int
+  maxHp       Int
+  gold        Int    @default(0)
+  stats       Json   // { attack, defense, mobility, utility }
+  position    Json   // { area, lane }
+  buffs       Json   // [{ type, duration, value }]
+  skills      Json   // { normal: {...}, ult: {...} }
+  items       Json   // [{ name, stats }]
+
+  player      Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([playerId])
+}
