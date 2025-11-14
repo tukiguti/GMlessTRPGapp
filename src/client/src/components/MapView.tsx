@@ -66,13 +66,6 @@ export const MapView: React.FC<MapViewProps> = ({
     dragon_pit: { x: 400, y: 550, label: '🐉' },
   };
 
-  // レーンのパス（SVGパス）
-  const lanes = {
-    top: 'M 100 700 L 200 600 L 300 500 L 400 400 L 500 300 L 600 200 L 700 100',
-    mid: 'M 100 700 L 200 600 L 300 500 L 400 400 L 500 300 L 600 200 L 700 100',
-    bot: 'M 100 700 L 200 600 L 300 500 L 400 400 L 500 300 L 600 200 L 700 100',
-  };
-
   const handleAreaClick = (area: string) => {
     if (onAreaClick) {
       onAreaClick(area);
