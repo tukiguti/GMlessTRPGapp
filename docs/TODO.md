@@ -550,34 +550,73 @@
 
 ---
 
-### 🔄 16. バックエンドサーバーの実装
+### ⏳ 16. 外部サービスのセットアップ（GCP最適化）
+
+**ステータス**: 未着手
+
+**理由**:
+- GCP e2-micro（1GB RAM）でPostgreSQLとRedisを動かすとメモリ不足
+- 外部サービスを活用してメモリ使用量を削減
+
+**作成内容**:
+- [ ] Supabase PostgreSQLのセットアップ（無料500MB）
+- [ ] Upstash Redisのセットアップ（無料256MB、10,000コマンド/日）
+- [ ] 接続文字列の取得と環境変数設定
+- [ ] 接続テスト
+
+**成果物**:
+- Supabase DATABASE_URL
+- Upstash REDIS_URL
+- `.env`ファイルの更新
+
+**関連ドキュメント**:
+- `system/gcp_optimized_design.md` - GCP最適化設計
+- `system/implementation_roadmap.md` - 実装手順（フェーズ1.1）
+
+---
+
+### 🔄 17. バックエンドサーバーの実装（GCP最適化版）
 
 **ステータス**: 未着手
 
 **理由**:
 - フロントエンドとゲームロジックが完成
 - サーバーとWebSocket通信の実装が必要
+- GCP e2-micro（1GB RAM、1GB/月ネットワーク）での運用を前提
 
 **作成内容**:
 - [ ] Expressサーバーの初期化
-- [ ] Socket.ioの設定
-- [ ] Prismaスキーマの作成
+- [ ] Socket.ioの設定（同時接続数70制限）
+- [ ] Prismaスキーマの作成（Supabase接続）
 - [ ] データベースマイグレーション
+- [ ] Redisキャッシュの統合（Upstash）
 - [ ] WebSocket接続ハンドラーの実装
 - [ ] GameEngineとの統合
+- [ ] gzip圧縮の有効化（ネットワーク転送量削減）
+- [ ] レート制限の実装
+- [ ] メモリ使用量監視
+
+**GCP最適化のポイント**:
+- Node.jsヒープメモリを384MBに制限（`--max-old-space-size=384`）
+- 同時接続数を70に制限（メモリ管理）
+- WebSocketメッセージを最小化（差分のみ送信）
+- gzip圧縮でネットワーク転送量を削減
+- Redisでゲーム状態をキャッシュ（メモリ節約）
 
 **成果物**:
-- `src/server/src/index.ts`
-- `src/server/src/websocket/connection.ts`
+- `src/server/src/index.ts`（GCP最適化版）
+- `src/server/src/websocket/connection.ts`（Redis統合）
 - `src/database/prisma/schema.prisma`
+- `src/server/package.json`（メモリ制限設定）
 
 **関連ドキュメント**:
 - `system/architecture.md` - サーバーアーキテクチャ
-- `system_todo.md` - 実装手順（フェーズ1、フェーズ4）
+- `system/gcp_optimized_design.md` - GCP最適化設計
+- `system/implementation_roadmap.md` - 実装手順（フェーズ1、フェーズ4）
 
 ---
 
-### ⏳ 17. アイテムショップUIの実装
+### ⏳ 18. アイテムショップUIの実装
 
 **ステータス**: 未着手
 
@@ -602,7 +641,7 @@
 
 ---
 
-### ⏳ 18. ゲーム前画面の実装
+### ⏳ 19. ゲーム前画面の実装
 
 **ステータス**: 未着手
 
@@ -627,7 +666,7 @@
 
 ---
 
-### ⏳ 19. ゲーム機能の統合
+### ⏳ 20. ゲーム機能の統合
 
 **ステータス**: 未着手
 
@@ -647,32 +686,48 @@
 
 **関連ドキュメント**:
 - すべてのゲームルールドキュメント
-- `system_todo.md` - 実装手順（フェーズ5〜6）
+- `system/implementation_roadmap.md` - 実装手順（フェーズ5〜6）
 
 ---
 
-### ⏳ 20. テストとデプロイ
+### ⏳ 21. テストとデプロイ（GCP最適化版）
 
 **ステータス**: 未着手
 
 **理由**:
 - ゲームの品質保証とデプロイが必要
+- GCP e2-micro（無料枠）での運用を前提
 
 **作成内容**:
 - [ ] ユニットテスト
 - [ ] 統合テスト
 - [ ] E2Eテスト
-- [ ] Docker化
-- [ ] GCPデプロイ
+- [ ] Vercelへのフロントエンドデプロイ（無料100GB/月）
+- [ ] GCP e2-microへのバックエンドデプロイ（無料枠）
+- [ ] Nginxリバースプロキシの設定
+- [ ] PM2プロセス管理の設定（メモリ制限付き）
+- [ ] SSL/TLS設定（Let's Encrypt）
+- [ ] モニタリング設定（メモリ、ネットワーク転送量）
+
+**GCP最適化のポイント**:
+- フロントエンド: Vercelで配信（100GB/月無料）
+- バックエンド: GCP e2-micro（1GB RAM、1GB/月ネットワーク）
+- DB: Supabase（無料500MB）
+- Redis: Upstash（無料256MB）
+- メモリ制限: Node.js 384MB、PM2自動再起動400MB
+- 同時接続数: 最大70接続
 
 **成果物**:
 - テストスイート
-- Dockerイメージ
+- デプロイスクリプト（`deploy_gcp.sh`）
+- Nginx設定ファイル
+- PM2設定ファイル
+- モニタリングスクリプト
 - デプロイされたアプリケーション
 
 **関連ドキュメント**:
 - `system/gcp_optimized_design.md` - GCPデプロイ設計
-- `system_todo.md` - 実装手順（フェーズ7）
+- `system/implementation_roadmap.md` - 実装手順（フェーズ7）
 
 ---
 
@@ -693,11 +748,12 @@
 10. ✅ **完了**: ゲームロジック実装（ConfigLoader、GameEngine、Combat等）
 11. ✅ **完了**: フロントエンド基盤構築（React、Vite、Zustand等）
 12. ✅ **完了**: UI設計とビジュアルマップ（MapView、ActionPanel、CombatLog）
-13. 🔄 **次**: バックエンドサーバーの実装
-14. ⏳ **未着手**: アイテムショップUIの実装
-15. ⏳ **未着手**: ゲーム前画面の実装
-16. ⏳ **未着手**: ゲーム機能の統合
-17. ⏳ **未着手**: テストとデプロイ
+13. 🔄 **次**: 外部サービスのセットアップ（Supabase、Upstash）⭐ **GCP最適化**
+14. ⏳ **未着手**: バックエンドサーバーの実装（GCP最適化版）
+15. ⏳ **未着手**: アイテムショップUIの実装
+16. ⏳ **未着手**: ゲーム前画面の実装
+17. ⏳ **未着手**: ゲーム機能の統合
+18. ⏳ **未着手**: テストとデプロイ（GCP最適化版）
 
 ---
 
@@ -721,8 +777,12 @@
 - `system/technology_stack.md` - 技術スタック詳細（React、Node.js、PostgreSQL等）
 - `system/configuration_management.md` - 設定管理設計（game_balance.yaml、ConfigLoader）
 - `system/hosting_options.md` - ホスティングオプション（GCP、AWS、Heroku等）
-- `system/gcp_optimized_design.md` - GCP最適化設計（無料枠・低コスト運用）
-- `system_todo.md` - 実装手順書（フェーズ0〜7の詳細チェックリスト）
+- `system/gcp_optimized_design.md` - ⭐ **GCP最適化設計（無料枠・低コスト運用）**
+  - GCP e2-micro（1GB RAM、1GB/月ネットワーク）
+  - Vercel（フロントエンド、100GB/月無料）
+  - Supabase PostgreSQL（無料500MB）
+  - Upstash Redis（無料256MB）
+- `system/implementation_roadmap.md` - ⭐ **実装ロードマップ（フェーズ0〜7の詳細チェックリスト、GCP最適化版）**
 
 ### 参考情報
 
@@ -735,6 +795,14 @@
 
 ## 更新履歴
 
+- 2025-11-14: GCP仕様に基づいてTODO全般を更新、情報統合完了
+  - `system_todo.md`を`docs/system/implementation_roadmap.md`に移動
+  - GCP最適化要件を実装ロードマップに組み込み（Supabase、Upstash、Vercel）
+  - タスク16を追加：外部サービスのセットアップ（Supabase、Upstash）
+  - タスク17を更新：バックエンドサーバーの実装（GCP最適化版）
+  - タスク21を更新：テストとデプロイ（GCP最適化版、Vercel + GCP e2-micro）
+  - システム設計ドキュメント一覧にGCP最適化情報を追加
+  - すべてのTODO情報をdocs配下に統合、一元管理を実現
 - 2025-11-13: ゲームルール＆システム設計フェーズ完了
   - システム設計の完了を追加（アーキテクチャ、技術スタック、ホスティング設計）
   - 実装手順書（system_todo.md）の参照を追加
