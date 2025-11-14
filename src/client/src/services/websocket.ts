@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import type { GamePhase } from '../types/game';
 
 export interface GameStateUpdate {
   gameId: string;
@@ -111,7 +112,7 @@ export class WebSocketService {
   /**
    * ラウンド開始イベントのリスナー
    */
-  onRoundStart(callback: (data: { round: number; phase: string }) => void): void {
+  onRoundStart(callback: (data: { round: number; phase: GamePhase }) => void): void {
     this.socket.on('round_start', callback);
   }
 

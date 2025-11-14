@@ -45,19 +45,19 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
       <div className="grid grid-cols-4 gap-2 text-sm">
         <div className="text-center">
           <p className="text-gray-400 text-xs">ATK</p>
-          <p className="font-semibold text-red-400">{character.stats.attack}</p>
+          <p className="font-semibold text-red-400">{character.finalStats.attack}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">DEF</p>
-          <p className="font-semibold text-blue-400">{character.stats.defense}</p>
+          <p className="font-semibold text-blue-400">{character.finalStats.defense}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">MOB</p>
-          <p className="font-semibold text-green-400">{character.stats.mobility}</p>
+          <p className="font-semibold text-green-400">{character.finalStats.mobility}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">UTL</p>
-          <p className="font-semibold text-purple-400">{character.stats.utility}</p>
+          <p className="font-semibold text-purple-400">{character.finalStats.utility}</p>
         </div>
       </div>
 

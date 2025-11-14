@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { WebSocketService } from '../services/websocket';
-import { useGameStore } from '../stores/gameStore';
 import type { GameMode } from './MainMenu';
 
 // ========================================
