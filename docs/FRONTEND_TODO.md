@@ -92,7 +92,7 @@
   - 参照: IMPLEMENTATION_GUIDE.md Phase 2.1
   - 推定時間: 1時間
 
-- [ ] **Task 13**: ゲームモード選択UIを実装（チュートリアル、CPU練習、カジュアル、ランク）
+- [x] **Task 13**: ゲームモード選択UIを実装（チュートリアル、CPU練習、カジュアル、ランク） ✅
   - ファイル: `src/client/src/components/MainMenu.tsx`（上記に含む）
   - 内容: 5種類のモード（チュートリアル、CPU練習、カジュアル、ランク、カスタム）
   - 参照: ui_design.md 2-1節
@@ -469,6 +469,25 @@ npm run dev --workspace=client
 
 ---
 
+## 🔧 最新の進捗（2025-11-14）
+
+### ✅ ビルドエラー修正完了
+- **CharacterCard.tsx**: `character.stats` → `character.finalStats` に修正
+- **Lobby.tsx**: 未使用の `useGameStore` インポートを削除
+- **websocket.ts**: `GamePhase` 型をインポートして型定義を修正
+- **古いファイル削除**: `.js` ファイル（ActionPanel, CharacterCard, CombatLog, GameBoard, MapView, TowerStatus）を削除
+
+### ✅ クライアント起動成功
+- `npm run build --workspace=client` が正常に完了
+- 開発サーバーが **http://localhost:3000/** で起動中
+- TypeScriptビルドエラーなし
+
+### ⚠️ サーバー側の課題
+- Prismaクライアントの初期化エラー（バイナリダウンロード失敗）
+- WebSocket接続テストは保留中
+
+---
+
 **最終更新**: 2025-11-14
 **実装者**: Claude AI
-**ステータス**: 主要機能実装完了、テスト待ち
+**ステータス**: クライアント側実装完了・ビルド成功、サーバー統合待ち
