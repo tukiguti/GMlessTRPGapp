@@ -13,7 +13,8 @@
     "build": "npm run build --workspaces",
     "test": "vitest",
     "test:connections": "tsx scripts/test-connections.ts",
-    "diagnose:db": "tsx scripts/diagnose-database-url.ts"
+    "diagnose:db": "tsx scripts/diagnose-database-url.ts",
+    "diagnose:network": "tsx scripts/diagnose-network.ts"
   },
   "dependencies": {
     "dotenv": "^16.3.1"
