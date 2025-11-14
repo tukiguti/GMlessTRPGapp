@@ -28,39 +28,51 @@ if (upstashUrl && upstashToken) {
 const redisUrl = process.env.REDIS_URL;
 let standardRedis: RedisClientType | null = null;
 
-if (redisUrl) {
-  standardRedis = createClient({
-    url: redisUrl,
-    socket: {
-      connectTimeout: 5000,
-      reconnectStrategy: (retries) => {
-        if (retries > 10) {
-          console.error('Redis reconnection failed after 10 retries');
-          return new Error('Redis reconnection limit exceeded');
-        }
-        return Math.min(retries * 100, 3000);
+// REDIS_URLが設定されており、有効なURL形式の場合のみクライアントを作成
+if (redisUrl && redisUrl.trim() !== '' && (redisUrl.startsWith('redis://') || redisUrl.startsWith('rediss://'))) {
+  try {
+    standardRedis = createClient({
+      url: redisUrl,
+      socket: {
+        connectTimeout: 5000,
+        reconnectStrategy: (retries) => {
+          if (retries > 10) {
+            console.error('Redis reconnection failed after 10 retries');
+            return new Error('Redis reconnection limit exceeded');
+          }
+          return Math.min(retries * 100, 3000);
+        },
       },
-    },
-  });
+    });
 
-  // エラーハンドリング
-  standardRedis.on('error', (err) => {
-    console.error('Redis Client Error:', err);
-  });
+    // エラーハンドリング
+    standardRedis.on('error', (err) => {
+      console.error('Redis Client Error:', err);
+    });
 
-  standardRedis.on('connect', () => {
-    console.log('✓ Redis connected');
-  });
+    standardRedis.on('connect', () => {
+      console.log('✓ Redis connected');
+    });
 
-  standardRedis.on('reconnecting', () => {
-    console.log('Redis reconnecting...');
-  });
+    standardRedis.on('reconnecting', () => {
+      console.log('Redis reconnecting...');
+    });
 
-  standardRedis.on('ready', () => {
-    console.log('✓ Redis ready');
-  });
+    standardRedis.on('ready', () => {
+      console.log('✓ Redis ready');
+    });
+
+    console.log('✓ Standard Redis client initialized');
+  } catch (error) {
+    console.error('Error initializing standard Redis client:', error);
+    standardRedis = null;
+  }
 } else {
-  console.warn('Warning: REDIS_URL is not set');
+  if (redisUrl && redisUrl.trim() !== '') {
+    console.warn('Warning: REDIS_URL is set but has invalid format. Expected redis:// or rediss:// protocol');
+  } else {
+    console.warn('Warning: REDIS_URL is not set');
+  }
 }
 
 /**
