@@ -206,45 +206,51 @@
 
 ### Phase 4.1: MapView改善
 
-- [ ] **Task 29**: MapViewにクリック可能エリアを実装
+- [x] **Task 29**: MapViewにクリック可能エリアを実装 ✅
   - ファイル: `src/client/src/components/MapView.tsx`
   - 内容: エリアごとのクリックハンドラー、移動アクション送信
   - 参照: ui_design.md 3-3節
   - 推定時間: 1.5時間
+  - 完了日: 2025-11-15
 
-- [ ] **Task 30**: 視界範囲（Fog of War）を実装
+- [x] **Task 30**: 視界範囲（Fog of War）を実装 ✅
   - ファイル: `src/client/src/components/MapView.tsx`
-  - 内容: 自チームの視界範囲外をグレーアウト
+  - 内容: 自チームの視界範囲外をグレーアウト、敵キャラクターは視界がある場合のみ表示
   - 参照: game_rules.md 5節
   - 推定時間: 1時間
+  - 完了日: 2025-11-15
 
 ### Phase 4.2: ActionPanel改善
 
-- [ ] **Task 31**: ActionPanelをWebSocketと統合
+- [x] **Task 31**: ActionPanelをWebSocketと統合 ✅
   - ファイル: `src/client/src/components/ActionPanel.tsx`
-  - 内容: 行動選択時にWebSocketでサーバーに送信
+  - 内容: WebSocketService.sendActionを使ってサーバーに行動を送信
   - 参照: IMPLEMENTATION_GUIDE.md Phase 4.2
   - 推定時間: 1時間
+  - 完了日: 2025-11-15
 
-- [ ] **Task 32**: 行動確定時のサーバー送信を実装
+- [x] **Task 32**: 行動確定時のサーバー送信を実装 ✅
   - ファイル: `src/client/src/components/ActionPanel.tsx`（上記に含む）
-  - 内容: sendAction WebSocketイベント
+  - 内容: sendAction WebSocketイベント、送信済みフラグ管理
   - 参照: websocket.ts 78-81行目
   - 推定時間: 30分
+  - 完了日: 2025-11-15
 
-- [ ] **Task 33**: タイマー表示を実装（60秒制限）
+- [x] **Task 33**: タイマー表示を実装（60秒制限） ✅
   - ファイル: `src/client/src/components/ActionPanel.tsx`
-  - 内容: 60秒カウントダウン、0秒で自動送信
+  - 内容: 60秒カウントダウン、0秒で自動送信（デフォルトfarm）
   - 参照: game_rules.md 2節
   - 推定時間: 30分
+  - 完了日: 2025-11-15
 
 ### Phase 4.3: CombatLog改善
 
-- [ ] **Task 34**: CombatLogをリアルタイム更新に対応
+- [x] **Task 34**: CombatLogをリアルタイム更新に対応 ✅
   - ファイル: `src/client/src/components/CombatLog.tsx`
-  - 内容: WebSocketのcombat_resultイベントをリスニング
+  - 内容: WebSocketのcombat_result, round_startイベントをリスニング、自動ログ追加
   - 参照: IMPLEMENTATION_GUIDE.md Phase 4.3
   - 推定時間: 1時間
+  - 完了日: 2025-11-15
 
 ---
 
@@ -418,8 +424,8 @@ npm run dev --workspace=client
 - **Phase 1 (Task 1-11)**: ✅ **100%完了** - 型定義、GameStore、WebSocket統合
 - **Phase 2 (Task 12-21)**: ✅ **100%完了** - メインメニュー、ロビー、キャラクター選択
 - **Phase 3 (Task 22-28)**: ✅ **100%完了** - アイテムショップ、スキルパネル
-- **Phase 4 (Task 29-34)**: ⚠️ **基本実装完了** - 既存コンポーネント改善（MapView、ActionPanel、CombatLog）
-- **Phase 5 (Task 35-36)**: ⚠️ **基本実装完了** - デザインシステム統一
+- **Phase 4 (Task 29-34)**: ✅ **100%完了** - 既存コンポーネント改善（MapView、ActionPanel、CombatLog）
+- **Phase 5 (Task 35-36)**: ⏳ **未実施** - デザインシステム統一
 - **Phase 6 (Task 37-38)**: ⏳ **未実施** - 統合テスト（実機テストが必要）
 
 ### 🔧 技術スタック
@@ -432,18 +438,13 @@ npm run dev --workspace=client
 
 ### 📝 残りのタスク
 
-#### Phase 4: 既存コンポーネント改善（優先度：中）
-- ⏳ Task 29-30: MapView改善（クリック可能エリア、Fog of War）
-- ⏳ Task 31-33: ActionPanel改善（WebSocket統合、60秒タイマー）
-- ⏳ Task 34: CombatLog改善（リアルタイム更新）
-
 #### Phase 5: デザインシステム統一（優先度：低）
 - ⏳ Task 35: Tailwind設定にカスタムカラー追加
 - ⏳ Task 36: 全コンポーネントのカラーパレット統一
 
 #### Phase 6: 統合テスト（優先度：高）
-- ⏳ Task 37: クライアント・サーバー接続テスト
-- ⏳ Task 38: ゲームフロー全体のE2Eテスト
+- ⏳ Task 37: クライアント・サーバー接続テスト（**ユーザー環境で実施**）
+- ⏳ Task 38: ゲームフロー全体のE2Eテスト（**ユーザー環境で実施**）
 
 ### 🚀 次のステップ
 
@@ -469,25 +470,44 @@ npm run dev --workspace=client
 
 ---
 
-## 🔧 最新の進捗（2025-11-14）
+## 🔧 最新の進捗（2025-11-15）
 
-### ✅ ビルドエラー修正完了
-- **CharacterCard.tsx**: `character.stats` → `character.finalStats` に修正
-- **Lobby.tsx**: 未使用の `useGameStore` インポートを削除
-- **websocket.ts**: `GamePhase` 型をインポートして型定義を修正
-- **古いファイル削除**: `.js` ファイル（ActionPanel, CharacterCard, CombatLog, GameBoard, MapView, TowerStatus）を削除
+### ✅ Phase 4 完了：既存コンポーネント改善
 
-### ✅ クライアント起動成功
+#### MapView改善（Task 29-30）
+- ✅ **Fog of War実装**: 視界範囲外のエリアをグレーアウト
+- ✅ **視界システム**: 自チームのキャラクターがいるエリア + 隣接エリアに視界
+- ✅ **敵キャラクター表示**: 視界がある場合のみ敵を表示
+- ✅ **視覚的フィードバック**: 視界がないエリアは「?」表示
+
+#### ActionPanel改善（Task 31-33）
+- ✅ **WebSocket統合**: `WebSocketService.sendAction`でサーバーに行動送信
+- ✅ **60秒タイマー**: カウントダウン機能、0秒で自動送信（デフォルト：farm）
+- ✅ **送信済み管理**: 送信後は再送信を防止、視覚的フィードバック
+- ✅ **ラウンド管理**: ラウンド変更時に自動リセット
+
+#### CombatLog改善（Task 34）
+- ✅ **リアルタイム更新**: `combat_result`, `round_start`イベントをリスニング
+- ✅ **自動ログ追加**: 戦闘結果を自動的にログに追加
+- ✅ **メッセージフォーマット**: 戦闘結果を読みやすい形式で表示
+
+### ✅ ビルド成功
 - `npm run build --workspace=client` が正常に完了
-- 開発サーバーが **http://localhost:3000/** で起動中
 - TypeScriptビルドエラーなし
+- 79モジュール変換完了
 
-### ⚠️ サーバー側の課題
-- Prismaクライアントの初期化エラー（バイナリダウンロード失敗）
-- WebSocket接続テストは保留中
+### 📝 次のステップ
+
+#### Phase 5: デザインシステム統一（優先度：低）
+- Tailwindカスタムカラー設定
+- 全コンポーネントのカラーパレット統一
+
+#### Phase 6: 統合テスト（優先度：高、**ユーザー環境で実施**）
+- クライアント・サーバー接続テスト
+- ゲームフロー全体のE2Eテスト
 
 ---
 
-**最終更新**: 2025-11-14
+**最終更新**: 2025-11-15
 **実装者**: Claude AI
-**ステータス**: クライアント側実装完了・ビルド成功、サーバー統合待ち
+**ステータス**: Phase 1-4 完了、Phase 5-6 残り

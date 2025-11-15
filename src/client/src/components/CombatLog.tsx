@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { WebSocketService } from '../services/websocket';
 
 type EventType = 'kill' | 'damage' | 'tower' | 'objective' | 'item' | 'system' | 'heal';
 
@@ -11,22 +12,94 @@ interface LogEntry {
 }
 
 interface CombatLogProps {
-  logs: LogEntry[];
+  logs?: LogEntry[]; // オプショナルに変更
   filter?: EventType[];
   maxHeight?: string;
+  enableWebSocket?: boolean; // WebSocketリスニングを有効化するフラグ
+  onLogUpdate?: (logs: LogEntry[]) => void; // ログ更新時のコールバック
 }
 
 export const CombatLog: React.FC<CombatLogProps> = ({
-  logs,
+  logs: externalLogs,
   filter,
-  maxHeight = '500px'
+  maxHeight = '500px',
+  enableWebSocket = false,
+  onLogUpdate
 }) => {
   const logEndRef = useRef<HTMLDivElement>(null);
+  const [internalLogs, setInternalLogs] = useState<LogEntry[]>(externalLogs || []);
+  const wsService = WebSocketService.getInstance();
+
+  // 外部からlogsが渡された場合はそちらを優先
+  const logs = externalLogs || internalLogs;
+
+  // WebSocketリスニング機能
+  useEffect(() => {
+    if (!enableWebSocket) return;
+
+    const handleCombatResult = (result: any) => {
+      console.log('[CombatLog] Combat result received:', result);
+
+      // CombatResultからLogEntryを生成
+      const newLog: LogEntry = {
+        id: `${Date.now()}-${Math.random()}`,
+        round: result.round || 0,
+        timestamp: new Date().toLocaleTimeString('ja-JP'),
+        type: result.killed ? 'kill' : 'damage',
+        message: formatCombatMessage(result),
+      };
+
+      setInternalLogs((prev) => {
+        const updated = [...prev, newLog];
+        if (onLogUpdate) {
+          onLogUpdate(updated);
+        }
+        return updated;
+      });
+    };
+
+    const handleRoundStart = (data: any) => {
+      const newLog: LogEntry = {
+        id: `${Date.now()}-${Math.random()}`,
+        round: data.round,
+        timestamp: new Date().toLocaleTimeString('ja-JP'),
+        type: 'system',
+        message: `ラウンド ${data.round} が開始しました`,
+      };
+
+      setInternalLogs((prev) => {
+        const updated = [...prev, newLog];
+        if (onLogUpdate) {
+          onLogUpdate(updated);
+        }
+        return updated;
+      });
+    };
+
+    // イベントリスナーを登録
+    wsService.onCombatResult(handleCombatResult);
+    wsService.onRoundStart(handleRoundStart);
+
+    // クリーンアップ
+    return () => {
+      wsService.off('combat_result', handleCombatResult);
+      wsService.off('round_start', handleRoundStart);
+    };
+  }, [enableWebSocket, onLogUpdate]);
 
   // 新しいログが追加されたら自動スクロール
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
+
+  // CombatResultからメッセージをフォーマット
+  const formatCombatMessage = (result: any): string => {
+    const { attackerName, defenderName, damage, killed } = result;
+    if (killed) {
+      return `${attackerName} が ${defenderName} を倒しました！ (${damage}ダメージ)`;
+    }
+    return `${attackerName} が ${defenderName} に ${damage} ダメージを与えました`;
+  };
 
   const getEventIcon = (type: EventType): string => {
     switch (type) {

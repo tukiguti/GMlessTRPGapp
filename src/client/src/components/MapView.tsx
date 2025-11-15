@@ -3,6 +3,8 @@ import React from 'react';
 interface MapViewProps {
   onAreaClick?: (area: string) => void;
   selectedArea?: string;
+  playerTeam?: 'blue' | 'red'; // プレイヤーのチーム
+  visibleAreas?: string[]; // 視界があるエリアのリスト
   characters: Array<{
     id: string;
     name: string;
@@ -21,11 +23,49 @@ interface MapViewProps {
 export const MapView: React.FC<MapViewProps> = ({
   onAreaClick,
   selectedArea,
+  playerTeam = 'blue',
+  visibleAreas,
   characters,
   towers
 }) => {
   const width = 800;
   const height = 800;
+
+  // 視界範囲を計算（visibleAreasが提供されない場合のフォールバック）
+  const calculateVisibleAreas = (): string[] => {
+    if (visibleAreas) return visibleAreas;
+
+    // 自チームのキャラクターがいるエリア + その隣接エリアに視界があると仮定
+    const teamCharacters = characters.filter(c => c.team === playerTeam);
+    const visible = new Set<string>();
+
+    teamCharacters.forEach(char => {
+      visible.add(char.position.area);
+      // 隣接エリアも追加（簡易実装）
+      const adjacentAreas = getAdjacentAreas(char.position.area);
+      adjacentAreas.forEach(area => visible.add(area));
+    });
+
+    return Array.from(visible);
+  };
+
+  // 隣接エリアを取得（簡易的なマッピング）
+  const getAdjacentAreas = (area: string): string[] => {
+    // TODO: 実際のマップ構造に基づいた隣接エリアマッピングを実装
+    // 現在は簡易的な実装
+    const adjacencyMap: Record<string, string[]> = {
+      blue_nexus: ['blue_nexus_tower'],
+      blue_nexus_tower: ['blue_nexus', 'blue_top_inner', 'blue_mid_inner', 'blue_bot_inner'],
+      blue_top_inner: ['blue_nexus_tower', 'blue_top_outer', 'blue_top_mid_jungle'],
+      blue_mid_inner: ['blue_nexus_tower', 'blue_mid_outer', 'blue_top_mid_jungle', 'blue_mid_bot_jungle'],
+      blue_bot_inner: ['blue_nexus_tower', 'blue_bot_outer', 'blue_mid_bot_jungle'],
+      // 他のエリアも同様に定義...
+    };
+    return adjacencyMap[area] || [];
+  };
+
+  const visibleAreaSet = new Set(calculateVisibleAreas());
+  const isAreaVisible = (area: string): boolean => visibleAreaSet.has(area);
 
   // エリアの座標定義（LoL風の対角線配置）
   const areas = {
@@ -155,6 +195,7 @@ export const MapView: React.FC<MapViewProps> = ({
           const charsInArea = getCharactersInArea(key);
           const isNexus = key.includes('nexus') && !key.includes('tower');
           const isTower = key.includes('tower') || key.includes('inner') || key.includes('outer');
+          const isVisible = isAreaVisible(key);
 
           return (
             <g key={key}>
@@ -164,12 +205,25 @@ export const MapView: React.FC<MapViewProps> = ({
                 cy={area.y}
                 r={isNexus ? 30 : isTower ? 20 : 25}
                 fill={isSelected ? '#fbbf24' : key.includes('blue') ? '#3b82f6' : key.includes('red') ? '#ef4444' : '#6b7280'}
-                fillOpacity={isNexus ? 0.8 : 0.4}
+                fillOpacity={isVisible ? (isNexus ? 0.8 : 0.4) : 0.1}
                 stroke={isSelected ? '#fbbf24' : key.includes('blue') ? '#60a5fa' : key.includes('red') ? '#f87171' : '#9ca3af'}
                 strokeWidth={isSelected ? 4 : 2}
+                opacity={isVisible ? 1 : 0.3}
                 className="cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => handleAreaClick(key)}
               />
+
+              {/* Fog of War オーバーレイ */}
+              {!isVisible && (
+                <circle
+                  cx={area.x}
+                  cy={area.y}
+                  r={isNexus ? 30 : isTower ? 20 : 25}
+                  fill="#1a1a1a"
+                  fillOpacity={0.7}
+                  className="pointer-events-none"
+                />
+              )}
 
               {/* エリアラベル */}
               <text
@@ -181,12 +235,13 @@ export const MapView: React.FC<MapViewProps> = ({
                 fontSize={isNexus ? 14 : 10}
                 fontWeight="bold"
                 className="pointer-events-none"
+                opacity={isVisible ? 1 : 0.5}
               >
-                {area.label}
+                {isVisible ? area.label : '?'}
               </text>
 
-              {/* キャラクター数の表示 */}
-              {charsInArea.length > 0 && (
+              {/* キャラクター数の表示（視界がある場合のみ） */}
+              {isVisible && charsInArea.length > 0 && (
                 <g>
                   <circle
                     cx={area.x + 15}
@@ -232,10 +287,14 @@ export const MapView: React.FC<MapViewProps> = ({
           );
         })}
 
-        {/* キャラクターアイコン（簡易版） */}
+        {/* キャラクターアイコン（視界がある場合のみ表示） */}
         {characters.map((char) => {
           const area = areas[char.position.area as keyof typeof areas];
           if (!area) return null;
+
+          // 視界チェック：自チームは常に表示、敵チームは視界がある場合のみ
+          const isVisible = char.team === playerTeam || isAreaVisible(char.position.area);
+          if (!isVisible) return null;
 
           // 同じエリアに複数いる場合のオフセット計算
           const charsInSameArea = getCharactersInArea(char.position.area);

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { WebSocketService } from '../services/websocket';
 
 type ActionType = 'attack' | 'farm' | 'move' | 'skill' | 'recall' | null;
 
@@ -15,8 +16,9 @@ interface ActionPanelProps {
   myCharacters: Character[];
   enemyCharacters: Character[];
   availableAreas: string[];
-  timeRemaining: number; // 秒
-  onActionSubmit: (action: {
+  gameId?: string; // ゲームID
+  roundDuration?: number; // ラウンド時間（秒）デフォルト60秒
+  onActionSubmit?: (action: {
     characterId: string;
     actionType: ActionType;
     target?: string;
@@ -28,7 +30,8 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
   myCharacters,
   enemyCharacters,
   availableAreas,
-  timeRemaining,
+  gameId,
+  roundDuration = 60,
   onActionSubmit
 }) => {
   const [selectedCharacter, setSelectedCharacter] = useState<string>(
@@ -37,37 +40,88 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
   const [selectedAction, setSelectedAction] = useState<ActionType>(null);
   const [selectedTarget, setSelectedTarget] = useState<string>('');
   const [selectedDestination, setSelectedDestination] = useState<string>('');
+  const [timeRemaining, setTimeRemaining] = useState<number>(roundDuration);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const currentCharacter = myCharacters.find(c => c.id === selectedCharacter);
+  const wsService = WebSocketService.getInstance();
 
-  const handleSubmit = () => {
-    if (!selectedAction || !selectedCharacter) {
-      alert('行動を選択してください');
-      return;
-    }
+  // タイマー機能
+  useEffect(() => {
+    if (isSubmitted || timeRemaining <= 0) return;
 
-    // バリデーション
-    if (selectedAction === 'attack' && !selectedTarget) {
-      alert('攻撃対象を選択してください');
-      return;
-    }
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          // 時間切れ：自動的にデフォルトアクション（farm）を送信
+          handleSubmit(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-    if (selectedAction === 'move' && !selectedDestination) {
-      alert('移動先を選択してください');
-      return;
-    }
+    return () => clearInterval(timer);
+  }, [timeRemaining, isSubmitted]);
 
-    onActionSubmit({
-      characterId: selectedCharacter,
-      actionType: selectedAction,
-      target: selectedTarget || undefined,
-      destination: selectedDestination || undefined,
-    });
-
-    // リセット
+  // ラウンドが変わったらリセット
+  useEffect(() => {
+    setTimeRemaining(roundDuration);
+    setIsSubmitted(false);
     setSelectedAction(null);
     setSelectedTarget('');
     setSelectedDestination('');
+  }, [roundDuration]);
+
+  const handleSubmit = (isAutoSubmit = false) => {
+    if (isSubmitted) return;
+
+    const actionType = selectedAction || 'farm'; // デフォルトはfarm
+    const characterId = selectedCharacter || myCharacters[0]?.id;
+
+    if (!characterId) {
+      console.error('No character selected');
+      return;
+    }
+
+    // 手動送信時のバリデーション
+    if (!isAutoSubmit) {
+      if (!selectedAction) {
+        alert('行動を選択してください');
+        return;
+      }
+
+      if (selectedAction === 'attack' && !selectedTarget) {
+        alert('攻撃対象を選択してください');
+        return;
+      }
+
+      if (selectedAction === 'move' && !selectedDestination) {
+        alert('移動先を選択してください');
+        return;
+      }
+    }
+
+    const action = {
+      gameId: gameId || '',
+      characterId,
+      actionType,
+      target: selectedTarget || undefined,
+      destination: selectedDestination || undefined,
+    };
+
+    // WebSocketでアクションを送信
+    wsService.sendAction(action);
+
+    // 親コンポーネントのコールバックも呼び出す（オプション）
+    if (onActionSubmit) {
+      onActionSubmit(action);
+    }
+
+    // 送信済みフラグを立てる
+    setIsSubmitted(true);
+
+    console.log('[ActionPanel] Action submitted:', action);
   };
 
   const getTimeColor = () => {
@@ -288,16 +342,27 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
 
       {/* 確定ボタン */}
       <button
-        onClick={handleSubmit}
-        disabled={!selectedAction}
+        onClick={() => handleSubmit(false)}
+        disabled={!selectedAction || isSubmitted}
         className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
-          selectedAction
+          selectedAction && !isSubmitted
             ? 'bg-blue-600 hover:bg-blue-700 text-white'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
         }`}
       >
-        {selectedAction ? '行動を確定する' : '行動を選択してください'}
+        {isSubmitted
+          ? '✓ 行動を送信しました'
+          : selectedAction
+          ? '行動を確定する'
+          : '行動を選択してください'}
       </button>
+
+      {/* 送信済みメッセージ */}
+      {isSubmitted && (
+        <div className="mt-4 p-3 bg-green-900/50 border border-green-500 rounded text-green-300 text-center">
+          行動を送信しました。次のラウンドまでお待ちください。
+        </div>
+      )}
     </div>
   );
 };
