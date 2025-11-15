@@ -1,14 +1,11 @@
 import { io, Socket } from 'socket.io-client';
-import type { GamePhase } from '../types/game';
-
-export interface GameStateUpdate {
-  gameId: string;
-  round: number;
-  phase: 'declaration' | 'resolution';
-  teams: any;
-  towers: any[];
-  minions: any[];
-}
+import type {
+  GameStateUpdate,
+  GameCreatedEvent,
+  RoundStartEvent,
+  CombatResult,
+  ErrorEvent,
+} from '../types/game';
 
 export class WebSocketService {
   private socket: Socket;
@@ -91,7 +88,7 @@ export class WebSocketService {
   /**
    * ゲーム作成イベントのリスナー
    */
-  onGameCreated(callback: (data: { gameId: string; gameState: any }) => void): void {
+  onGameCreated(callback: (data: GameCreatedEvent) => void): void {
     this.socket.on('game_created', callback);
   }
 
@@ -112,21 +109,21 @@ export class WebSocketService {
   /**
    * ラウンド開始イベントのリスナー
    */
-  onRoundStart(callback: (data: { round: number; phase: GamePhase }) => void): void {
+  onRoundStart(callback: (data: RoundStartEvent) => void): void {
     this.socket.on('round_start', callback);
   }
 
   /**
    * 戦闘結果イベントのリスナー
    */
-  onCombatResult(callback: (result: any) => void): void {
+  onCombatResult(callback: (result: CombatResult) => void): void {
     this.socket.on('combat_result', callback);
   }
 
   /**
    * エラーイベントのリスナー
    */
-  onError(callback: (error: { message: string }) => void): void {
+  onError(callback: (error: ErrorEvent) => void): void {
     this.socket.on('error', callback);
   }
 
