@@ -40,6 +40,7 @@ export function setupWebSocket(io: Server, onDisconnect: () => void) {
     // ゲーム作成
     socket.on('create_game', async (data: { mode: string; playerName: string }) => {
       try {
+        console.log('[WebSocket] create_game event received:', JSON.stringify(data, null, 2));
         const gameId = crypto.randomUUID();
 
         // Prismaでゲームを作成

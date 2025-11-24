@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { WebSocketService } from '../services/websocket';
+import { useWebSocketContext } from '../contexts/WebSocketContext';
 import { useGameStore } from '../stores/gameStore';
 import type {
   GameCreatedEvent,
@@ -28,7 +28,8 @@ export interface UseWebSocketReturn {
  */
 export const useWebSocket = (): UseWebSocketReturn => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting');
-  const wsRef = useRef<WebSocketService | null>(null);
+  const ws = useWebSocketContext(); // Context経由でWebSocketServiceを取得
+  const wsRef = useRef(ws);
 
   // GameStoreのアクション
   const setGameId = useGameStore((state) => state.setGameId);
@@ -157,16 +158,20 @@ export const useWebSocket = (): UseWebSocketReturn => {
   // ========================================
 
   useEffect(() => {
-    // WebSocketServiceインスタンスを取得
-    const ws = WebSocketService.getInstance();
-    wsRef.current = ws;
+    // Context経由で取得したインスタンスを使用
+    const currentWs = wsRef.current;
+    let lastStatus: ConnectionStatus | null = null;
 
-    // 接続状態チェック
+    // 接続状態チェック（状態が変わった時だけログ出力）
     const checkConnection = () => {
-      if (ws.isConnected()) {
-        setConnectionStatus('connected');
-      } else {
-        setConnectionStatus('connecting');
+      const isConnected = currentWs.isConnected();
+      const newStatus: ConnectionStatus = isConnected ? 'connected' : 'connecting';
+
+      // 状態が変わった時だけログ出力
+      if (newStatus !== lastStatus) {
+        console.log(`[useWebSocket] Status changed: ${lastStatus || 'initial'} → ${newStatus}`);
+        lastStatus = newStatus;
+        setConnectionStatus(newStatus);
       }
     };
 
@@ -177,23 +182,23 @@ export const useWebSocket = (): UseWebSocketReturn => {
     const intervalId = setInterval(checkConnection, 1000);
 
     // イベントリスナーを登録 (Task 9)
-    ws.onGameCreated(handleGameCreated);
-    ws.onGameState(handleGameState);
-    ws.onGameUpdate(handleGameUpdate);
-    ws.onRoundStart(handleRoundStart);
-    ws.onCombatResult(handleCombatResult);
-    ws.onError(handleError);
+    currentWs.onGameCreated(handleGameCreated);
+    currentWs.onGameState(handleGameState);
+    currentWs.onGameUpdate(handleGameUpdate);
+    currentWs.onRoundStart(handleRoundStart);
+    currentWs.onCombatResult(handleCombatResult);
+    currentWs.onError(handleError);
 
     // クリーンアップ
     return () => {
       clearInterval(intervalId);
       // イベントリスナーを解除
-      ws.off('game_created', handleGameCreated);
-      ws.off('game_state', handleGameState);
-      ws.off('game_update', handleGameUpdate);
-      ws.off('round_start', handleRoundStart);
-      ws.off('combat_result', handleCombatResult);
-      ws.off('error', handleError);
+      currentWs.off('game_created', handleGameCreated);
+      currentWs.off('game_state', handleGameState);
+      currentWs.off('game_update', handleGameUpdate);
+      currentWs.off('round_start', handleRoundStart);
+      currentWs.off('combat_result', handleCombatResult);
+      currentWs.off('error', handleError);
     };
   }, [
     handleGameCreated,

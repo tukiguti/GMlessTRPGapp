@@ -3,11 +3,13 @@ import { GameBoard } from './components/GameBoard';
 import { MainMenu, GameMode } from './components/MainMenu';
 import { Lobby } from './components/Lobby';
 import { CharacterSelection } from './components/CharacterSelection';
+import { OfflineGame } from './components/OfflineGame';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import { useWebSocket, ConnectionStatus } from './hooks/useWebSocket';
 import { useGameStore } from './stores/gameStore';
 
 // ========================================
-// App コンポーネント - リファクタリング版
+// App コンポーネント - Context API版
 // ========================================
 
 /**
@@ -16,17 +18,26 @@ import { useGameStore } from './stores/gameStore';
  * 2. ロビー → ルーム作成/参加
  * 3. キャラクター選択 → ロール/レーン選択
  * 4. ゲームプレイ → 実際のゲーム画面
+ * 5. オフラインゲーム → CPU戦（サーバー不要）
  */
-type GameFlow = 'menu' | 'lobby' | 'character-selection' | 'game';
+type GameFlow = 'menu' | 'lobby' | 'character-selection' | 'game' | 'offline';
 
-function App() {
+/**
+ * AppContent - WebSocketProvider内で実行される実際のアプリコンテンツ
+ */
+interface AppContentProps {
+  initialMode: GameMode;
+  onBackToMenu: () => void;
+}
+
+function AppContent({ initialMode, onBackToMenu: onBackToMainMenu }: AppContentProps) {
   // ========================================
   // 状態管理
   // ========================================
-  const [gameFlow, setGameFlow] = useState<GameFlow>('menu');
-  const [selectedMode, setSelectedMode] = useState<GameMode>('casual');
+  const [gameFlow, setGameFlow] = useState<GameFlow>('lobby');
+  const [selectedMode] = useState<GameMode>(initialMode);
 
-  // WebSocket接続管理
+  // WebSocket接続管理（Context経由）
   const { connectionStatus, isConnected, reconnect } = useWebSocket();
 
   // ゲームストア
@@ -38,18 +49,10 @@ function App() {
   // ========================================
 
   /**
-   * メインメニューでモード選択
-   */
-  const handleStartGame = (mode: GameMode) => {
-    setSelectedMode(mode);
-    setGameFlow('lobby');
-  };
-
-  /**
    * ロビーから戻る
    */
   const handleBackToMenu = () => {
-    setGameFlow('menu');
+    onBackToMainMenu();
   };
 
   /**
@@ -195,10 +198,7 @@ function App() {
 
       {/* メインコンテンツ */}
       <main>
-        {/* 1. メインメニュー */}
-        {gameFlow === 'menu' && <MainMenu onStartGame={handleStartGame} />}
-
-        {/* 2. ロビー */}
+        {/* 1. ロビー */}
         {gameFlow === 'lobby' && (
           <Lobby
             mode={selectedMode}
@@ -207,7 +207,7 @@ function App() {
           />
         )}
 
-        {/* 3. キャラクター選択 */}
+        {/* 2. キャラクター選択 */}
         {gameFlow === 'character-selection' && gameId && (
           <CharacterSelection
             gameId={gameId}
@@ -215,10 +215,51 @@ function App() {
           />
         )}
 
-        {/* 4. ゲームプレイ */}
+        {/* 3. ゲームプレイ */}
         {gameFlow === 'game' && gameId && <GameBoard />}
       </main>
     </div>
+  );
+}
+
+/**
+ * App - WebSocketProviderでラップ
+ * オフラインモードは接続不要なので、外側で処理
+ */
+function App() {
+  const [gameFlow, setGameFlow] = useState<GameFlow>('menu');
+  const [selectedMode, setSelectedMode] = useState<GameMode>('casual');
+
+  const handleStartGame = (mode: GameMode) => {
+    setSelectedMode(mode);
+
+    // CPU練習モードの場合はオフラインゲームへ（接続不要）
+    if (mode === 'cpu') {
+      setGameFlow('offline');
+    } else {
+      setGameFlow('lobby');
+    }
+  };
+
+  const handleBackToMenu = () => {
+    setGameFlow('menu');
+  };
+
+  // オフラインモードの場合は接続不要
+  if (gameFlow === 'offline') {
+    return <OfflineGame onBack={handleBackToMenu} />;
+  }
+
+  // メインメニューを表示（オンラインモード選択前）
+  if (gameFlow === 'menu') {
+    return <MainMenu onStartGame={handleStartGame} />;
+  }
+
+  // オンラインモードの場合はWebSocketProvider内で処理
+  return (
+    <WebSocketProvider>
+      <AppContent initialMode={selectedMode} onBackToMenu={handleBackToMenu} />
+    </WebSocketProvider>
   );
 }
 

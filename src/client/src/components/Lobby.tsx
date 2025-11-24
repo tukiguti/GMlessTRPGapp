@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { WebSocketService } from '../services/websocket';
+import { useWebSocketContext } from '../contexts/WebSocketContext';
 import type { GameMode } from './MainMenu';
 
 // ========================================
@@ -13,14 +13,12 @@ interface LobbyProps {
 }
 
 export const Lobby: React.FC<LobbyProps> = ({ mode, onBack, onGameReady }) => {
+  const ws = useWebSocketContext(); // Context経由でWebSocketServiceを取得
   const [view, setView] = useState<'menu' | 'creating' | 'joining'>('menu');
   const [roomCode, setRoomCode] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
   const [isJoiningRoom, setIsJoiningRoom] = useState(false);
-
-  // WebSocketサービス
-  const ws = WebSocketService.getInstance();
 
   // ========================================
   // ルーム作成 (Task 15)
@@ -34,8 +32,9 @@ export const Lobby: React.FC<LobbyProps> = ({ mode, onBack, onGameReady }) => {
     setIsCreatingRoom(true);
 
     try {
-      // ゲーム作成
-      ws.createGame(mode);
+      console.log('[Lobby] Creating game with mode:', mode, 'playerName:', playerName);
+      // Context経由で取得したインスタンスを使用
+      ws.createGame(mode, playerName);
 
       // game_createdイベントを待つ
       ws.onGameCreated((data) => {
@@ -68,7 +67,7 @@ export const Lobby: React.FC<LobbyProps> = ({ mode, onBack, onGameReady }) => {
     setIsJoiningRoom(true);
 
     try {
-      // ゲームに参加
+      // Context経由で取得したインスタンスを使用
       ws.joinGame(roomCode, playerName);
 
       // game_stateイベントを待つ

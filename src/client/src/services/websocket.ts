@@ -11,7 +11,8 @@ export class WebSocketService {
   private socket: Socket;
   private static instance: WebSocketService;
 
-  private constructor() {
+  // Context API用にpublicコンストラクタに変更
+  constructor() {
     const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:4000';
 
     this.socket = io(serverUrl, {
@@ -20,6 +21,17 @@ export class WebSocketService {
     });
 
     this.setupEventHandlers();
+  }
+
+  /**
+   * シングルトンインスタンスをリセット（開発用）
+   * @deprecated Context APIを使用してください
+   */
+  static resetInstance(): void {
+    if (WebSocketService.instance) {
+      WebSocketService.instance.disconnect();
+      WebSocketService.instance = null as any;
+    }
   }
 
   private setupEventHandlers(): void {
@@ -36,6 +48,10 @@ export class WebSocketService {
     });
   }
 
+  /**
+   * Singletonパターンでインスタンスを取得
+   * @deprecated Context APIを使用してください (useWebSocketContext)
+   */
   static getInstance(): WebSocketService {
     if (!this.instance) {
       this.instance = new WebSocketService();
@@ -53,8 +69,8 @@ export class WebSocketService {
   /**
    * ゲームを作成
    */
-  createGame(mode: string = 'casual'): void {
-    this.socket.emit('create_game', { mode });
+  createGame(mode: string = 'casual', playerName: string = 'Player'): void {
+    this.socket.emit('create_game', { mode, playerName });
   }
 
   /**
