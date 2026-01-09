@@ -8,7 +8,7 @@ import { ConfigLoader } from '../config/ConfigLoader';
 // ========================================
 export interface PlayerAction {
   characterId: string;
-  actionType: 'attack' | 'farm' | 'move' | 'recall' | 'skill' | 'item_purchase';
+  actionType: 'attack' | 'farm' | 'move' | 'recall' | 'skill' | 'item_purchase' | 'wait';
   target?: string;
   destination?: string;
   skillType?: 'normal' | 'ult';

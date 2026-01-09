@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tower } from '../stores/gameStore';
+import { Tower } from '@gmless-trpg/game';
 
 interface TowerStatusProps {
   towers: Tower[];
@@ -39,9 +39,8 @@ export const TowerStatus: React.FC<TowerStatusProps> = ({ towers }) => {
               <div className="text-2xl mb-1">{getTowerIcon(tower.type)}</div>
               <div className="w-full bg-gray-700 rounded-full h-2 mb-1">
                 <div
-                  className={`h-2 rounded-full ${
-                    hpPercentage > 50 ? 'bg-green-500' : hpPercentage > 25 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`}
+                  className={`h-2 rounded-full ${hpPercentage > 50 ? 'bg-green-500' : hpPercentage > 25 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}
                   style={{ width: `${hpPercentage}%` }}
                 />
               </div>

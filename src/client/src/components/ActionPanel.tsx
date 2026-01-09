@@ -111,7 +111,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
     };
 
     // WebSocketでアクションを送信
-    wsService.sendAction(action);
+    wsService.submitAction(gameId || '', action as any);
 
     // 親コンポーネントのコールバックも呼び出す（オプション）
     if (onActionSubmit) {
@@ -185,11 +185,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           {/* 攻撃 */}
           <button
             onClick={() => setSelectedAction('attack')}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedAction === 'attack'
+            className={`p-4 rounded-lg border-2 transition-all ${selectedAction === 'attack'
                 ? 'bg-red-600 border-red-400'
                 : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <div className="text-3xl mb-1">⚔️</div>
             <div className="text-white font-semibold">攻撃</div>
@@ -198,11 +197,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           {/* ファーム */}
           <button
             onClick={() => setSelectedAction('farm')}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedAction === 'farm'
+            className={`p-4 rounded-lg border-2 transition-all ${selectedAction === 'farm'
                 ? 'bg-yellow-600 border-yellow-400'
                 : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <div className="text-3xl mb-1">💰</div>
             <div className="text-white font-semibold">ファーム</div>
@@ -211,11 +209,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           {/* 移動 */}
           <button
             onClick={() => setSelectedAction('move')}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedAction === 'move'
+            className={`p-4 rounded-lg border-2 transition-all ${selectedAction === 'move'
                 ? 'bg-green-600 border-green-400'
                 : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <div className="text-3xl mb-1">🚶</div>
             <div className="text-white font-semibold">移動</div>
@@ -224,11 +221,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           {/* スキル */}
           <button
             onClick={() => setSelectedAction('skill')}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedAction === 'skill'
+            className={`p-4 rounded-lg border-2 transition-all ${selectedAction === 'skill'
                 ? 'bg-purple-600 border-purple-400'
                 : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <div className="text-3xl mb-1">✨</div>
             <div className="text-white font-semibold">スキル</div>
@@ -237,11 +233,10 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
           {/* リコール */}
           <button
             onClick={() => setSelectedAction('recall')}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selectedAction === 'recall'
+            className={`p-4 rounded-lg border-2 transition-all ${selectedAction === 'recall'
                 ? 'bg-blue-600 border-blue-400'
                 : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <div className="text-3xl mb-1">🏠</div>
             <div className="text-white font-semibold">リコール</div>
@@ -344,17 +339,16 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({
       <button
         onClick={() => handleSubmit(false)}
         disabled={!selectedAction || isSubmitted}
-        className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
-          selectedAction && !isSubmitted
+        className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${selectedAction && !isSubmitted
             ? 'bg-blue-600 hover:bg-blue-700 text-white'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-        }`}
+          }`}
       >
         {isSubmitted
           ? '✓ 行動を送信しました'
           : selectedAction
-          ? '行動を確定する'
-          : '行動を選択してください'}
+            ? '行動を確定する'
+            : '行動を選択してください'}
       </button>
 
       {/* 送信済みメッセージ */}

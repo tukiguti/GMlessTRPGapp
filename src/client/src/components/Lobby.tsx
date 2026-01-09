@@ -70,8 +70,8 @@ export const Lobby: React.FC<LobbyProps> = ({ mode, onBack, onGameReady }) => {
       // Context経由で取得したインスタンスを使用
       ws.joinGame(roomCode, playerName);
 
-      // game_stateイベントを待つ
-      ws.onGameState((state) => {
+      // game_joinedイベントを待つ
+      ws.onGameJoined((state) => {
         console.log('Joined game:', state);
         setIsJoiningRoom(false);
         onGameReady();
@@ -96,7 +96,7 @@ export const Lobby: React.FC<LobbyProps> = ({ mode, onBack, onGameReady }) => {
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2">ロビー</h1>
             <p className="text-gray-400">
-              モード: <span className="text-blue-400">{mode}</span>
+              Mode: <span className="text-blue-400">{mode}</span>
             </p>
           </div>
 

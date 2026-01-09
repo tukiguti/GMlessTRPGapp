@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { GameBoard } from './components/GameBoard';
 import { MainMenu, GameMode } from './components/MainMenu';
 import { Lobby } from './components/Lobby';
 import { CharacterSelection } from './components/CharacterSelection';
 import { OfflineGame } from './components/OfflineGame';
+import { OnlineGame } from './components/OnlineGame';
 import { WebSocketProvider } from './contexts/WebSocketContext';
 import { useWebSocket, ConnectionStatus } from './hooks/useWebSocket';
 import { useGameStore } from './stores/gameStore';
@@ -216,7 +216,12 @@ function AppContent({ initialMode, onBackToMenu: onBackToMainMenu }: AppContentP
         )}
 
         {/* 3. ゲームプレイ */}
-        {gameFlow === 'game' && gameId && <GameBoard />}
+        {gameFlow === 'game' && gameId && (
+          <OnlineGame
+            gameId={gameId}
+            onBack={handleBackToMenu}
+          />
+        )}
       </main>
     </div>
   );

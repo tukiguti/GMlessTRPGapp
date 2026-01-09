@@ -28,7 +28,7 @@ export interface Minion {
 // ========================================
 // ジャングルバフ型定義
 // ========================================
-export interface JungleBuff {
+export interface JungleBuffState {
   id: string;
   type: 'red' | 'blue';
   team: 'blue' | 'red';
@@ -62,7 +62,7 @@ export interface GameState {
   };
   towers: Tower[];
   minions: Minion[];
-  jungleBuffs: JungleBuff[];
+  jungleBuffs: JungleBuffState[];
   objects: GameObject[];
   status: 'waiting' | 'in_progress' | 'finished';
   winner?: 'blue' | 'red';
@@ -183,7 +183,7 @@ export class GameEngine {
   /**
    * ジャングルバフの初期化
    */
-  private initializeJungleBuffs(): JungleBuff[] {
+  private initializeJungleBuffs(): JungleBuffState[] {
     return [
       { id: 'blue_red_buff', type: 'red', team: 'blue', available: true, respawnTimer: 0 },
       { id: 'blue_blue_buff', type: 'blue', team: 'blue', available: true, respawnTimer: 0 },

@@ -1,11 +1,24 @@
 import { io, Socket } from 'socket.io-client';
-import type {
-  GameStateUpdate,
-  GameCreatedEvent,
-  RoundStartEvent,
-  CombatResult,
-  ErrorEvent,
-} from '../types/game';
+import type { GameState, PlayerAction } from '@gmless-trpg/game';
+
+// クライアント独自のイベント型定義
+export interface GameCreatedEvent {
+  gameId: string;
+  round: number;
+  phase: string;
+  status: string;
+}
+
+export interface ActionProgressEvent {
+  current: number;
+  total: number;
+}
+
+export interface RoundResolvedEvent {
+  round: number;
+  phase: string;
+  state: GameState;
+}
 
 export class WebSocketService {
   private socket: Socket;
@@ -81,6 +94,13 @@ export class WebSocketService {
   }
 
   /**
+   * キャラクター選択
+   */
+  selectCharacter(gameId: string, role: string, lane: string): void {
+    this.socket.emit('select_character', { gameId, role, lane });
+  }
+
+  /**
    * ゲームから退出
    */
   leaveGame(gameId: string): void {
@@ -88,18 +108,15 @@ export class WebSocketService {
   }
 
   /**
-   * プレイヤーアクションを送信
+   * アクションを送信
    */
-  sendAction(action: any): void {
-    this.socket.emit('player_action', action);
+  submitAction(gameId: string, action: PlayerAction): void {
+    this.socket.emit('submit_action', { gameId, action });
   }
 
-  /**
-   * キャラクター選択
-   */
-  selectCharacter(gameId: string, role: string, lane: string): void {
-    this.socket.emit('select_character', { gameId, role, lane });
-  }
+  // ========================================
+  // イベントリスナー
+  // ========================================
 
   /**
    * ゲーム作成イベントのリスナー
@@ -109,37 +126,58 @@ export class WebSocketService {
   }
 
   /**
-   * ゲーム状態更新イベントのリスナー
+   * ゲーム参加イベントのリスナー
    */
-  onGameState(callback: (state: GameStateUpdate) => void): void {
-    this.socket.on('game_state', callback);
+  onGameJoined(callback: (state: GameState) => void): void {
+    this.socket.on('game_joined', callback);
   }
 
   /**
-   * ゲーム更新イベントのリスナー
+   * プレイヤー参加イベントのリスナー
    */
-  onGameUpdate(callback: (state: GameStateUpdate) => void): void {
-    this.socket.on('game_update', callback);
+  onPlayerJoined(callback: (data: { playerName: string; team: string }) => void): void {
+    this.socket.on('player_joined', callback);
   }
 
   /**
-   * ラウンド開始イベントのリスナー
+   * アクション受付イベントのリスナー
    */
-  onRoundStart(callback: (data: RoundStartEvent) => void): void {
-    this.socket.on('round_start', callback);
+  onActionAccepted(callback: (data: { actionId: number }) => void): void {
+    this.socket.on('action_accepted', callback);
+  }
+
+  /**
+   * アクション進捗イベントのリスナー
+   */
+  onActionProgress(callback: (data: ActionProgressEvent) => void): void {
+    this.socket.on('action_progress', callback);
+  }
+
+  /**
+   * ラウンド解決イベントのリスナー
+   */
+  onRoundResolved(callback: (data: RoundResolvedEvent) => void): void {
+    this.socket.on('round_resolved', callback);
   }
 
   /**
    * 戦闘結果イベントのリスナー
    */
-  onCombatResult(callback: (result: CombatResult) => void): void {
+  onCombatResult(callback: (result: any) => void): void {
     this.socket.on('combat_result', callback);
+  }
+
+  /**
+   * ラウンド開始イベントのリスナー
+   */
+  onRoundStart(callback: (data: any) => void): void {
+    this.socket.on('round_start', callback);
   }
 
   /**
    * エラーイベントのリスナー
    */
-  onError(callback: (error: ErrorEvent) => void): void {
+  onError(callback: (error: { message: string }) => void): void {
     this.socket.on('error', callback);
   }
 
@@ -158,10 +196,12 @@ export class WebSocketService {
   }
 
   /**
-   * 接続を再接続
+   * 再接続
    */
   reconnect(): void {
-    this.socket.connect();
+    if (!this.socket.connected) {
+      this.socket.connect();
+    }
   }
 }
 

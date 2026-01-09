@@ -1,5 +1,5 @@
 import React from 'react';
-import { Character } from '../stores/gameStore';
+import { Character } from '@gmless-trpg/game';
 
 interface CharacterCardProps {
   character: Character;
@@ -9,9 +9,8 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
   const hpPercentage = (character.hp / character.maxHp) * 100;
 
   return (
-    <div className={`bg-game-accent p-4 rounded-lg border-l-4 ${
-      character.alive ? 'border-green-500' : 'border-gray-500 opacity-50'
-    }`}>
+    <div className={`bg-game-accent p-4 rounded-lg border-l-4 ${character.alive ? 'border-green-500' : 'border-gray-500 opacity-50'
+      }`}>
       <div className="flex justify-between items-start mb-2">
         <div>
           <h4 className="font-bold text-lg">{character.name}</h4>
@@ -33,9 +32,8 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
         </div>
         <div className="w-full bg-gray-700 rounded-full h-3">
           <div
-            className={`h-3 rounded-full transition-all ${
-              hpPercentage > 50 ? 'bg-green-500' : hpPercentage > 25 ? 'bg-yellow-500' : 'bg-red-500'
-            }`}
+            className={`h-3 rounded-full transition-all ${hpPercentage > 50 ? 'bg-green-500' : hpPercentage > 25 ? 'bg-yellow-500' : 'bg-red-500'
+              }`}
             style={{ width: `${hpPercentage}%` }}
           />
         </div>
@@ -45,19 +43,19 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({ character }) => {
       <div className="grid grid-cols-4 gap-2 text-sm">
         <div className="text-center">
           <p className="text-gray-400 text-xs">ATK</p>
-          <p className="font-semibold text-red-400">{character.finalStats.attack}</p>
+          <p className="font-semibold text-red-400">{character.stats.attack}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">DEF</p>
-          <p className="font-semibold text-blue-400">{character.finalStats.defense}</p>
+          <p className="font-semibold text-blue-400">{character.stats.defense}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">MOB</p>
-          <p className="font-semibold text-green-400">{character.finalStats.mobility}</p>
+          <p className="font-semibold text-green-400">{character.stats.mobility}</p>
         </div>
         <div className="text-center">
           <p className="text-gray-400 text-xs">UTL</p>
-          <p className="font-semibold text-purple-400">{character.finalStats.utility}</p>
+          <p className="font-semibold text-purple-400">{character.stats.utility}</p>
         </div>
       </div>
 

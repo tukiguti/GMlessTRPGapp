@@ -202,7 +202,7 @@ export class OfflineGameEngine {
     // TODO: 後で実装
 
     // ステップ2: 移動解決（リコール、ローム）
-    for (const [characterId, action] of this.roundActions) {
+    for (const [characterId, action] of Array.from(this.roundActions)) {
       if (action.moveDestination !== null) {
         const character = this.gameState.characters.find((c) => c.id === characterId);
         if (character && character.isAlive) {
@@ -219,7 +219,7 @@ export class OfflineGameEngine {
     // TODO: 後で実装
 
     // ステップ4-13: マッチアップ決定と戦闘、ファームなど
-    for (const [characterId, action] of this.roundActions) {
+    for (const [characterId, action] of Array.from(this.roundActions)) {
       const character = this.gameState.characters.find((c) => c.id === characterId);
       if (!character || !character.isAlive) continue;
 

@@ -4,10 +4,10 @@ import { CharacterCard } from './CharacterCard';
 import { TowerStatus } from './TowerStatus';
 
 export const GameBoard: React.FC = () => {
-  const { round, phase, characters, towers, team } = useGameStore();
+  const { round, phase, teams, towers, team } = useGameStore();
 
-  const blueCharacters = characters.filter(c => c.position.area.includes('blue') || team === 'blue');
-  const redCharacters = characters.filter(c => c.position.area.includes('red') || team === 'red');
+  const blueCharacters = teams.blue;
+  const redCharacters = teams.red;
 
   const blueTowers = towers.filter(t => t.team === 'blue');
   const redTowers = towers.filter(t => t.team === 'red');

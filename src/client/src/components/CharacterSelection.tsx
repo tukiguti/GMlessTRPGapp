@@ -22,77 +22,77 @@ const ROLES: Array<{
   baseStats: Stats;
   icon: string;
 }> = [
-  {
-    id: 'ad_marksman',
-    name: 'ADマークスマン',
-    description: '遠距離物理DPS',
-    baseStats: { attack: 8, defense: 3, mobility: 5, utility: 4 },
-    icon: '🏹',
-  },
-  {
-    id: 'ad_fighter',
-    name: 'ADファイター',
-    description: '近接物理DPS',
-    baseStats: { attack: 7, defense: 6, mobility: 5, utility: 2 },
-    icon: '⚔️',
-  },
-  {
-    id: 'ad_assassin',
-    name: 'ADアサシン',
-    description: '高機動物理バースト',
-    baseStats: { attack: 8, defense: 3, mobility: 9, utility: 0 },
-    icon: '🗡️',
-  },
-  {
-    id: 'ad_tank',
-    name: 'ADタンク',
-    description: '物理防御型タンク',
-    baseStats: { attack: 4, defense: 9, mobility: 3, utility: 4 },
-    icon: '🛡️',
-  },
-  {
-    id: 'ap_mage',
-    name: 'APメイジ',
-    description: '遠距離魔法DPS',
-    baseStats: { attack: 9, defense: 2, mobility: 4, utility: 5 },
-    icon: '🔮',
-  },
-  {
-    id: 'ap_assassin',
-    name: 'APアサシン',
-    description: '高機動魔法バースト',
-    baseStats: { attack: 9, defense: 2, mobility: 8, utility: 1 },
-    icon: '⚡',
-  },
-  {
-    id: 'ap_fighter',
-    name: 'APファイター',
-    description: '近接魔法DPS',
-    baseStats: { attack: 7, defense: 5, mobility: 6, utility: 2 },
-    icon: '🔥',
-  },
-  {
-    id: 'ap_tank',
-    name: 'APタンク',
-    description: '魔法防御型タンク',
-    baseStats: { attack: 3, defense: 9, mobility: 4, utility: 4 },
-    icon: '💎',
-  },
-  {
-    id: 'ap_support',
-    name: 'APサポート',
-    description: '魔法支援型',
-    baseStats: { attack: 4, defense: 4, mobility: 5, utility: 7 },
-    icon: '✨',
-  },
-  {
-    id: 'tank_support',
-    name: 'タンクサポート',
-    description: '防御支援型',
-    baseStats: { attack: 2, defense: 8, mobility: 3, utility: 7 },
-    icon: '🛡️',
-  },
-];
+    {
+      id: 'ad_marksman',
+      name: 'ADマークスマン',
+      description: '遠距離物理DPS',
+      baseStats: { attack: 8, defense: 3, mobility: 5, utility: 4 },
+      icon: '🏹',
+    },
+    {
+      id: 'ad_fighter',
+      name: 'ADファイター',
+      description: '近接物理DPS',
+      baseStats: { attack: 7, defense: 6, mobility: 5, utility: 2 },
+      icon: '⚔️',
+    },
+    {
+      id: 'ad_assassin',
+      name: 'ADアサシン',
+      description: '高機動物理バースト',
+      baseStats: { attack: 8, defense: 3, mobility: 9, utility: 0 },
+      icon: '🗡️',
+    },
+    {
+      id: 'ad_tank',
+      name: 'ADタンク',
+      description: '物理防御型タンク',
+      baseStats: { attack: 4, defense: 9, mobility: 3, utility: 4 },
+      icon: '🛡️',
+    },
+    {
+      id: 'ap_mage',
+      name: 'APメイジ',
+      description: '遠距離魔法DPS',
+      baseStats: { attack: 9, defense: 2, mobility: 4, utility: 5 },
+      icon: '🔮',
+    },
+    {
+      id: 'ap_assassin',
+      name: 'APアサシン',
+      description: '高機動魔法バースト',
+      baseStats: { attack: 9, defense: 2, mobility: 8, utility: 1 },
+      icon: '⚡',
+    },
+    {
+      id: 'ap_fighter',
+      name: 'APファイター',
+      description: '近接魔法DPS',
+      baseStats: { attack: 7, defense: 5, mobility: 6, utility: 2 },
+      icon: '🔥',
+    },
+    {
+      id: 'ap_tank',
+      name: 'APタンク',
+      description: '魔法防御型タンク',
+      baseStats: { attack: 3, defense: 9, mobility: 4, utility: 4 },
+      icon: '💎',
+    },
+    {
+      id: 'ap_support',
+      name: 'APサポート',
+      description: '魔法支援型',
+      baseStats: { attack: 4, defense: 4, mobility: 5, utility: 7 },
+      icon: '✨',
+    },
+    {
+      id: 'tank_support',
+      name: 'タンクサポート',
+      description: '防御支援型',
+      baseStats: { attack: 2, defense: 8, mobility: 3, utility: 7 },
+      icon: '🛡️',
+    },
+  ];
 
 // ========================================
 // レーン定義 (Task 20)
@@ -102,12 +102,12 @@ const LANES: Array<{
   name: string;
   description: string;
 }> = [
-  { id: 'TOP', name: 'トップ', description: '上レーン - タンク/ファイター向き' },
-  { id: 'JG', name: 'ジャングル', description: 'ジャングル - 機動力重視' },
-  { id: 'MID', name: 'ミッド', description: '中レーン - メイジ/アサシン向き' },
-  { id: 'BOT', name: 'ボット', description: '下レーン - マークスマン向き' },
-  { id: 'SUP', name: 'サポート', description: 'サポート - 支援特化' },
-];
+    { id: 'TOP', name: 'トップ', description: '上レーン - タンク/ファイター向き' },
+    { id: 'JG', name: 'ジャングル', description: 'ジャングル - 機動力重視' },
+    { id: 'MID', name: 'ミッド', description: '中レーン - メイジ/アサシン向き' },
+    { id: 'BOT', name: 'ボット', description: '下レーン - マークスマン向き' },
+    { id: 'SUP', name: 'サポート', description: 'サポート - 支援特化' },
+  ];
 
 export const CharacterSelection: React.FC<CharacterSelectionProps> = ({
   gameId,
@@ -119,7 +119,8 @@ export const CharacterSelection: React.FC<CharacterSelectionProps> = ({
   const [isConfirming, setIsConfirming] = useState(false);
 
   // ゲームストア
-  const characters = useGameStore((state) => state.characters);
+  const teams = useGameStore((state) => state.teams);
+  const characters = [...teams.blue, ...teams.red];
 
   // WebSocketサービス
   const ws = WebSocketService.getInstance();
@@ -186,11 +187,10 @@ export const CharacterSelection: React.FC<CharacterSelectionProps> = ({
                 <button
                   key={role.id}
                   onClick={() => setSelectedRole(role.id)}
-                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                    selectedRole === role.id
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${selectedRole === role.id
                       ? 'border-blue-500 bg-blue-900/30 shadow-lg shadow-blue-500/50'
                       : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                  }`}
+                    }`}
                 >
                   <div className="text-3xl mb-2">{role.icon}</div>
                   <div className="text-sm font-semibold">{role.name}</div>
@@ -208,13 +208,12 @@ export const CharacterSelection: React.FC<CharacterSelectionProps> = ({
                     key={lane.id}
                     onClick={() => !taken && setSelectedLane(lane.id)}
                     disabled={taken}
-                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                      taken
+                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${taken
                         ? 'border-gray-800 bg-gray-900/50 cursor-not-allowed opacity-50'
                         : selectedLane === lane.id
-                        ? 'border-purple-500 bg-purple-900/30 shadow-lg shadow-purple-500/50'
-                        : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
-                    }`}
+                          ? 'border-purple-500 bg-purple-900/30 shadow-lg shadow-purple-500/50'
+                          : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                      }`}
                   >
                     <div className="text-lg font-bold mb-1">{lane.name}</div>
                     <div className="text-xs text-gray-400">

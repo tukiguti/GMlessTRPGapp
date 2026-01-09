@@ -7,8 +7,11 @@ import { Server, Socket } from 'socket.io';
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
 import crypto from 'crypto';
+import { GameEngine } from '@gmless-trpg/game';
+import { setupActionHandlers } from './actions';
 
 const prisma = new PrismaClient();
+const gameEngine = new GameEngine();
 
 // GCP最適化: Redisクライアントの初期化
 const redis = new Redis(process.env.REDIS_URL || '', {
@@ -43,13 +46,17 @@ export function setupWebSocket(io: Server, onDisconnect: () => void) {
         console.log('[WebSocket] create_game event received:', JSON.stringify(data, null, 2));
         const gameId = crypto.randomUUID();
 
+        // GameEngineで初期状態を生成
+        // @ts-ignore: mode type mismatch fix later
+        const initialState = gameEngine.createGame(gameId, data.mode || 'casual');
+
         // Prismaでゲームを作成
         const game = await prisma.game.create({
           data: {
             id: gameId,
             mode: data.mode || 'casual',
             status: 'waiting',
-            state: {} // 初期状態は空
+            state: initialState as any // JSONとして保存
           }
         });
 
@@ -66,7 +73,7 @@ export function setupWebSocket(io: Server, onDisconnect: () => void) {
         // GCP最適化: ゲーム状態をRedisにキャッシュ（1時間）
         await redis.set(
           `game:${gameId}`,
-          JSON.stringify({ id: gameId, round: 0, phase: 'declaration', status: 'waiting' }),
+          JSON.stringify(initialState),
           'EX',
           3600
         );
@@ -124,12 +131,7 @@ export function setupWebSocket(io: Server, onDisconnect: () => void) {
 
         // GCP最適化: Redisからゲーム状態を取得
         const cachedState = await redis.get(`game:${gameId}`);
-        const gameState = cachedState ? JSON.parse(cachedState) : {
-          id: gameId,
-          round: game.round,
-          phase: game.phase,
-          status: game.status
-        };
+        const gameState = cachedState ? JSON.parse(cachedState) : game.state;
 
         socket.emit('game_joined', gameState);
 
@@ -143,27 +145,14 @@ export function setupWebSocket(io: Server, onDisconnect: () => void) {
       }
     });
 
-    // プレイヤーアクション
-    socket.on('player_action', async (data: { gameId: string; action: any }) => {
-      try {
-        const { gameId, action } = data;
 
-        console.log('[Action] Received:', gameId, action);
 
-        // TODO: GameEngineと統合してアクションを処理
-        // const result = gameEngine.processAction(gameId, action);
+    // ... (imports)
 
-        // GCP最適化: 差分のみ送信
-        io.to(gameId).emit('game_update', {
-          type: 'action',
-          playerId: socket.id,
-          action
-        });
-      } catch (error) {
-        console.error('[Action] Process error:', error);
-        socket.emit('error', { message: 'Failed to process action' });
-      }
-    });
+    // ... (inside setupWebSocket)
+
+    // アクションハンドラーのセットアップ
+    setupActionHandlers(io, socket, redis, prisma);
 
     // 切断処理
     socket.on('disconnect', () => {
